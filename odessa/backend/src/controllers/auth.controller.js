@@ -1,40 +1,60 @@
-const sql = require('mssql');
+const { getPool, sql } = require('../config/db');
+const queries = require('../models/sqlQueries');
+const { hashPassword, comparePassword } = require('../utils/hash');
+const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const config = {
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  server: process.env.DB_SERVER || 'localhost',
-  database: process.env.DB_DATABASE,
-  port: parseInt(process.env.DB_PORT, 10) || 1433,
-  options: {
-    encrypt: false,
-    trustServerCertificate: true
-  },
-  pool: {
-    max: 10,
-    min: 0,
-    idleTimeoutMillis: 30000
+const register = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: 'Faltan datos requeridos' });
+    }
+
+    const pool = await getPool();
+    // verificar si ya existe el usuario
+    const existing = await pool.request().input('email', sql.VarChar, email).query(queries.getUserByEmail);
+    if (existing.recordset && existing.recordset.length > 0) {
+      return res.status(400).json({ message: 'Usuario ya registrado' });
+    }
+
+    const passwordHash = await hashPassword(password);
+    const result = await pool.request()
+      .input('username', sql.VarChar, username)
+      .input('email', sql.VarChar, email)
+      .input('passwordHash', sql.VarChar, passwordHash)
+      .query(queries.createUser);
+
+    const userId = (result.recordset && result.recordset[0] && result.recordset[0].id) || null;
+    return res.status(201).json({ id: userId, message: 'Usuario creado' });
+  } catch (err) {
+    console.error('Register error:', err);
+    return res.status(500).json({ message: 'Error al registrar usuario' });
   }
 };
 
-async function getPool() {
+const login = async (req, res) => {
   try {
-    if (!global._mssqlPool) {
-      global._mssqlPool = await sql.connect(config);
-      console.log('✅ Conexión a SQL Server establecida');
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Faltan credenciales' });
     }
-    return global._mssqlPool;
-  } catch (err) {
-    console.error('❌ Error conectando a SQL Server:', {
-      error: err.message,
-      server: config.server,
-      port: config.port,
-      database: config.database
-    });
-    throw err;
-  }
-}
 
-module.exports = { sql, getPool };
+    const pool = await getPool();
+    const result = await pool.request().input('email', sql.VarChar, email).query(queries.getUserByEmail);
+    const user = (result.recordset && result.recordset[0]) || null;
+    if (!user) return res.status(400).json({ message: 'Credenciales inválidas' });
+
+    const match = await comparePassword(password, user.passwordHash);
+    if (!match) return res.status(400).json({ message: 'Credenciales inválidas' });
+
+    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' });
+    return res.json({ token });
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({ message: 'Error al iniciar sesión' });
+  }
+};
+
+module.exports = { register, login };
