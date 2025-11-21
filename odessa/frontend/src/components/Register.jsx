@@ -13,6 +13,7 @@ const Register = ({ onClose, onSwitchToLogin }) => {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   async function onSubmit(e) {
@@ -30,8 +31,18 @@ const Register = ({ onClose, onSwitchToLogin }) => {
         passwordConfirm: formData.passwordConfirm,
       });
       console.log("register success:", res.data);
+
+      // marcar éxito, limpiar formulario y cerrar popup después de un breve delay
+      setSuccess(true);
+      setFormData({ username: "", email: "", password: "", passwordConfirm: "" });
+      setError("");
       setLoading(false);
-      navigate("/login");
+
+      setTimeout(() => {
+        if (onClose) onClose(); // cierra el modal si el padre pasó onClose
+        // opcional: navegar al login si prefieres
+        // navigate("/login");
+      }, 1200);
     } catch (err) {
       console.error("register axios error:", err);
       setLoading(false);
@@ -53,44 +64,54 @@ const Register = ({ onClose, onSwitchToLogin }) => {
     }}>
       <div className="login-box">
         <button className="close-x" onClick={onClose}>×</button>
-        <h2>Registrarse</h2>
-        <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="username"
-            placeholder="Usuario"
-            value={formData.username}
-            onChange={handleChange}
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Correo electrónico"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Contraseña"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          <input
-            type="password"
-            name="passwordConfirm"
-            placeholder="Repetir contraseña"
-            value={formData.passwordConfirm}
-            onChange={handleChange}
-          />
-          {error && <div style={{ color: "red" }}>{error}</div>}
-          <button type="submit" disabled={loading}>
-            {loading ? "Registrando..." : "Registrar"}
-          </button>
-          <p className="switch-form">
-            ¿Ya tienes cuenta? <span onClick={onSwitchToLogin}>Inicia sesión</span>
-          </p>
-        </form>
+
+        {success ? (
+          <div className="register-success" style={{ padding: 20, textAlign: "center" }}>
+            <h3>Registro exitoso</h3>
+            <p>Se ha creado la cuenta. Cerrando...</p>
+          </div>
+        ) : (
+          <>
+            <h2>Registrarse</h2>
+            <form onSubmit={onSubmit}>
+              <input
+                type="text"
+                name="username"
+                placeholder="Usuario"
+                value={formData.username}
+                onChange={handleChange}
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Correo electrónico"
+                value={formData.email}
+                onChange={handleChange}
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Contraseña"
+                value={formData.password}
+                onChange={handleChange}
+              />
+              <input
+                type="password"
+                name="passwordConfirm"
+                placeholder="Repetir contraseña"
+                value={formData.passwordConfirm}
+                onChange={handleChange}
+              />
+              {error && <div style={{ color: "red" }}>{error}</div>}
+              <button type="submit" disabled={loading}>
+                {loading ? "Registrando..." : "Registrar"}
+              </button>
+              <p className="switch-form">
+                ¿Ya tienes cuenta? <span onClick={onSwitchToLogin}>Inicia sesión</span>
+              </p>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );
