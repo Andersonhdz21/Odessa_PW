@@ -5,9 +5,14 @@ const jwt = require('jsonwebtoken');
 
 async function register(req, res) {
   try {
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
+    const { username, email, password, passwordConfirm } = req.body;
+
+    if (!username || !email || !password || !passwordConfirm) {
       return res.status(400).json({ message: 'Faltan datos' });
+    }
+
+    if (password !== passwordConfirm) {
+      return res.status(400).json({ message: 'Las contraseñas no coinciden' });
     }
 
     const pool = await getPool();

@@ -1,41 +1,50 @@
 import React, { useState } from "react";
 import "./Login.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Register = ({ onClose, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
+    passwordConfirm: "",
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("http://localhost:5001/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-      if (response.ok) {
-        alert("Registro exitoso");
-        onSwitchToLogin();
-      } else {
-        const error = await response.json();
-        alert(error.message || "Error al registrar");
-      }
-    } catch (error) {
-      alert("Error al conectar con el servidor");
+  async function onSubmit(e) {
+    e.preventDefault();
+    if (formData.password !== formData.passwordConfirm) {
+      setError("Las contraseñas no coinciden");
+      return;
     }
-  };
+    setLoading(true);
+    try {
+      const res = await axios.post("/api/auth/register", {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        passwordConfirm: formData.passwordConfirm,
+      });
+      console.log("register success:", res.data);
+      setLoading(false);
+      navigate("/login");
+    } catch (err) {
+      console.error("register axios error:", err);
+      setLoading(false);
+      setError(err.response?.data?.message || "Error en el registro");
+    }
+  }
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    setError("");
   };
 
   return (
@@ -45,7 +54,7 @@ const Register = ({ onClose, onSwitchToLogin }) => {
       <div className="login-box">
         <button className="close-x" onClick={onClose}>×</button>
         <h2>Registrarse</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={onSubmit}>
           <input
             type="text"
             name="username"
@@ -67,7 +76,17 @@ const Register = ({ onClose, onSwitchToLogin }) => {
             value={formData.password}
             onChange={handleChange}
           />
-          <button type="submit">Registrarse</button>
+          <input
+            type="password"
+            name="passwordConfirm"
+            placeholder="Repetir contraseña"
+            value={formData.passwordConfirm}
+            onChange={handleChange}
+          />
+          {error && <div style={{ color: "red" }}>{error}</div>}
+          <button type="submit" disabled={loading}>
+            {loading ? "Registrando..." : "Registrar"}
+          </button>
           <p className="switch-form">
             ¿Ya tienes cuenta? <span onClick={onSwitchToLogin}>Inicia sesión</span>
           </p>
