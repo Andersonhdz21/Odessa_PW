@@ -175,10 +175,35 @@
     display: flex;
   }
 
-  /* en responsive ocultamos el logo; hamburguesa a la izquierda y user al extremo derecho */
-  .logo { display: none; }
+  /* en responsive: hamburguesa a la izquierda, usuario a la derecha, logo pequeño centrado */
   .menu-hamburguesa { margin-left: 8px; }
   .user-section { margin-left: auto; margin-right: 8px; }
+  .logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 1100;
+    pointer-events: none; /* evita capturar taps sobre el logo */
+    flex-direction: column; /* apila imagen encima del texto */
+  }
+  .logo img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+  }
+  .logo span {
+    display: block;
+    font-size: 15px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    line-height: 1;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+  }
 
   .nav-links {
     position: fixed;
