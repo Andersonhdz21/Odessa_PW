@@ -13,6 +13,7 @@ const Navbar = () => {
   const [usuarioActual, setUsuarioActual] = useState(null);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
+  const prevBodyOverflow = useRef('');
 
   useEffect(() => {
     // Verificar si hay un usuario en localStorage
@@ -47,6 +48,17 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // bloquear scroll del body cuando el menú hamburguesa está abierto
+  useEffect(() => {
+    if (menuAbierto) {
+      prevBodyOverflow.current = document.body.style.overflow || '';
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = prevBodyOverflow.current || '';
+    }
+    return () => { document.body.style.overflow = prevBodyOverflow.current || ''; };
+  }, [menuAbierto]);
 
   const toggleLogin = () => {
     setMostrarLogin(!mostrarLogin);
@@ -96,7 +108,10 @@ const Navbar = () => {
       </nav>
 
   {/* backdrop siempre renderizado para permitir transiciones de blur/opacidad */}
-  <div className={`backdrop ${menuAbierto ? 'activo' : ''}`} onClick={toggleMenu}></div>
+      <div
+        className={`backdrop ${menuAbierto ? 'activo' : ''}`}
+        onClick={menuAbierto ? toggleMenu : undefined}
+      ></div>
 
       {mostrarLogin && (
         <Login 

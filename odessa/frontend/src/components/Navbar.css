@@ -151,8 +151,9 @@
   -webkit-backdrop-filter: blur(0px);
   backdrop-filter: blur(0px);
   opacity: 1;
-  transition: opacity 600ms ease, -webkit-backdrop-filter 420ms cubic-bezier(.2,.9,.2,1), backdrop-filter 420ms cubic-bezier(.2,.9,.2,1), background-color 600ms ease;
+  transition: opacity 000ms ease, -webkit-backdrop-filter 600ms cubic-bezier(.2,.9,.2,1), backdrop-filter 420ms cubic-bezier(.2,.9,.2,1), background-color 600ms ease;
   z-index: 999;
+  pointer-events: none; /* evitar que capture clicks cuando no está activo */
 }
 
 .backdrop.activo {
@@ -160,6 +161,7 @@
   -webkit-backdrop-filter: blur(30px);
   backdrop-filter: blur(30px);
   opacity: 1;
+  pointer-events: auto; /* solo entonces permite cerrar con click */
 }
 
 
@@ -181,32 +183,34 @@
   .nav-links {
     position: fixed;
     top: 80px;
-    left: -100%;
+    left: 0;
     width: 100%;
     height: calc(100vh - 80px);
-    background-color: rgba(0, 0, 0, 0);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    padding: 40px 0;
-    transition: left 0.3s ease-in-out;
+    align-items: center;
+    padding-top: 64px; /* espacio desde el borde superior */
+    padding-bottom: 64px; /* espacio desde el borde inferior */
+    box-sizing: border-box;
+    transform: translateY(800px); /* mantener ligeramente fuera para evitar flash */
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 900ms cubic-bezier(.2,.9,.2,1), opacity 400ms ease;
   }
 
   .nav-links.activo {
-    left: 0;
-    /* cuando está activo mostrar centered overlay */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+    /* overlay visible, centrado y con espaciado vertical automático */
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+    justify-content: space-evenly; /* reparte los links verticalmente */
     text-align: center;
   }
 
   .nav-links li {
-    margin: 20px 0;
+    margin: 0; /* controlamos espacio con space-evenly y padding */
     width: 100%;
-    padding: 0 20px;
+    padding: 8px 20px;
     box-sizing: border-box;
     text-align: center;
   }
