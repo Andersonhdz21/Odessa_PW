@@ -8,6 +8,7 @@ import Register from "./Register";
 const Navbar = () => {
   const [mostrarLogin, setMostrarLogin] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false); 
   const [mostrarRegister, setMostrarRegister] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -15,8 +16,19 @@ const Navbar = () => {
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
   const prevBodyOverflow = useRef('');
+  
+  const CLOSE_ANIMATION_DURATION = 300; //animacion de cierre (300ms)
 
-  // ... (otros useEffects y funciones sin cambios) ...
+  const closeUserMenu = () => {
+    if (isClosing) return; 
+
+    setIsClosing(true);
+    
+    setTimeout(() => {
+      setUserMenuOpen(false);
+      setIsClosing(false); 
+    }, CLOSE_ANIMATION_DURATION);
+  };
 
   useEffect(() => {
     // Verifica si hay un usuario en localStorage
@@ -51,6 +63,20 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+  //cerrar menu al hacer scroll
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    
+    const closeMenuOnScroll = () => {
+        closeUserMenu(); // Usa la función de cierre animado
+    };
+
+    window.addEventListener('scroll', closeMenuOnScroll, { once: true });
+    
+    return () => {
+        window.removeEventListener('scroll', closeMenuOnScroll);
+    };
+  }, [userMenuOpen]);
 
   // bloquear scroll del body cuando el menú hamburguesa está abierto
   useEffect(() => {
@@ -64,9 +90,13 @@ const Navbar = () => {
   }, [menuAbierto]);
 
   const toggleLogin = () => {
-    // if user is logged in, open user menu instead
+    // Si hay usuario, abre/cierra el menú de usuario.
     if (usuarioActual) {
-      setUserMenuOpen(!userMenuOpen);
+      if (userMenuOpen) {
+        closeUserMenu();
+      } else {
+        setUserMenuOpen(true);
+      }
       setMostrarRegister(false);
       setMenuAbierto(false);
       return;
@@ -86,14 +116,12 @@ const Navbar = () => {
     setMenuAbierto(!menuAbierto);
     setMostrarLogin(false);
     setMostrarRegister(false);
-    setUserMenuOpen(false);
+    closeUserMenu(); 
   };
 
   const handleLoginSuccess = (user) => {
-    // set user from callback after successful login
     if (user) setUsuarioActual(user);
     else {
-      // fallback: try reading localStorage
       const u = localStorage.getItem('usuario');
       if (u) setUsuarioActual(JSON.parse(u));
     }
@@ -101,11 +129,10 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    // clear storage and state
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
     setUsuarioActual(null);
-    setUserMenuOpen(false); // Cierra el menú después de cerrar sesión
+    closeUserMenu();
   };
 
   return (
@@ -136,7 +163,6 @@ const Navbar = () => {
               onClick={toggleLogin} 
               role="button" 
               tabIndex={0}
-              // ⚠️ Añadido para asegurar que el icono no cierre el menú si ya está abierto y se hace clic en él
               aria-expanded={userMenuOpen}
             >
               <img src={userIcon} alt="Usuario" />
@@ -148,14 +174,11 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* 🟢 MENÚ DE USUARIO Y BACKDROP FUERA DEL NAV */}
-      {userMenuOpen && usuarioActual && (
+      {(userMenuOpen || isClosing) && usuarioActual && (
         <>
-          {/* 1. BACKDROP INVISIBLE PARA DETECTAR CLIC FUERA */}
-          <div className="user-menu-backdrop" onClick={() => setUserMenuOpen(false)} />
+          <div className="user-menu-backdrop" onClick={closeUserMenu} />
           
-          {/* 2. MENÚ DESPLEGABLE */}
-          <div className="user-menu enter">
+          <div className={`user-menu ${!isClosing ? 'enter' : 'out'}`}> 
             <div className="user-info">
               <strong>{usuarioActual.username || usuarioActual.nombre || usuarioActual.email}</strong>
               <div className="user-email">{usuarioActual.email}</div>

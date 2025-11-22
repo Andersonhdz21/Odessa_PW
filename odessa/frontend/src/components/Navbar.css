@@ -76,35 +76,28 @@
 .user-menu {
   position: fixed;
   right: 16px;
-  top: 95px;
+  top: 90px; 
   background-color: rgba(0, 0, 0, 0.4); 
   -webkit-backdrop-filter: blur(20px); 
   backdrop-filter: blur(20px);
+  
   color: #fff;
   border-radius: 8px;
   padding: 12px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.3);
-  z-index: 1200;
+  z-index: 1200; 
   min-width: 200px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; 
   text-align: center;
   overflow: visible;
+
+  transition: transform 300ms, opacity 300ms;
 }
 
-.user-menu-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  z-index: 1199;
-  pointer-events: auto;
-}
 
-.user-menu .user-info { display:grid; align-items:center;  gap:8px;margin-top: 20px; margin-bottom: 30px; }
+.user-menu .user-info { display:grid; align-items:center; gap:8px;margin-top: 20px; margin-bottom: 30px; }
 .user-menu .user-email { font-size: 12px; opacity: 0.85; }
 .logout-btn { background: #e03e2d; color: white; border: none; padding: 8px 10px; border-radius: 6px; margin-bottom: 20px; cursor:pointer; }
 .logout-btn:hover { opacity: 0.9; }
@@ -202,6 +195,52 @@
   pointer-events: auto;
 }
 
+.user-menu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 1199;
+  pointer-events: auto;
+}
+
+
+.user-menu.enter {
+  animation: userMenuIn 260ms cubic-bezier(.2,.9,.2,1) both;
+}
+
+@keyframes userMenuIn {
+  0% {
+    transform: translateY(-6px) scale(0.98);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(2px) scale(1.01);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animación de salida user-menu*/
+.user-menu.out {
+  animation: userMenuOut 300ms ease-out forwards;
+}
+
+@keyframes userMenuOut {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-150px)translateX(70px) scale(0.1); 
+    opacity: 0;
+  }
+}
 
 /* Responsive */
 @media screen and (max-width: 768px) {
@@ -298,36 +337,4 @@
 .navbar.hidden {
   transform: translateY(-130%);
   pointer-events: none;
-}
-
-/* Animación de entrada para user-menu */
-.user-menu.enter {
-  animation: userMenuIn 260ms cubic-bezier(.2,.9,.2,1) both;
-}
-
-@keyframes userMenuIn {
-  0% {
-    transform: translateY(-6px) scale(0.98);
-    opacity: 0;
-  }
-  60% {
-    transform: translateY(2px) scale(1.01);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-/* Backdrop para cerrar user-menu al tocar afuera */
-.user-menu-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  z-index: 1198; /* por debajo del user-menu (1200) */
-  pointer-events: auto;
 }
