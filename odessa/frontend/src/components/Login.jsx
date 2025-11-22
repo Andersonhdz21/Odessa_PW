@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Login.css";
 
-const Login = ({ onClose, onSwitchToRegister }) => {
+const Login = ({ onClose, onSwitchToRegister, onLogin }) => {
   const [formData, setFormData] = useState({
     email: "",
     name: "",
@@ -23,6 +23,12 @@ const Login = ({ onClose, onSwitchToRegister }) => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.token);
+        // store user safe info if provided by backend
+        if (data.user) {
+          localStorage.setItem('usuario', JSON.stringify(data.user));
+        }
+        // notify parent (Navbar) about successful login
+        if (onLogin) onLogin(data.user || null);
         onClose();
       } else {
         const error = await response.json();
