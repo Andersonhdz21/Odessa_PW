@@ -95,7 +95,8 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {menuAbierto && <div className="backdrop" onClick={toggleMenu}></div>}
+  {/* backdrop siempre renderizado para permitir transiciones de blur/opacidad */}
+  <div className={`backdrop ${menuAbierto ? 'activo' : ''}`} onClick={toggleMenu}></div>
 
       {mostrarLogin && (
         <Login 
