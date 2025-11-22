@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Navbar.css";
 import logo from "../assets/logo.png";
 import userIcon from "../assets/user-icon.png";
@@ -9,7 +9,10 @@ const Navbar = () => {
   const [mostrarLogin, setMostrarLogin] = useState(false);
   const [mostrarRegister, setMostrarRegister] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [usuarioActual, setUsuarioActual] = useState(null);
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
 
   useEffect(() => {
     // Verificar si hay un usuario en localStorage
@@ -17,6 +20,32 @@ const Navbar = () => {
     if (usuario) {
       setUsuarioActual(JSON.parse(usuario));
     }
+  }, []);
+
+  // Hide on scroll down, show on scroll up
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY || document.documentElement.scrollTop;
+      const diff = currentY - lastScrollY.current;
+
+      if (!ticking.current) {
+        window.requestAnimationFrame(() => {
+          // if scrolled down more than 20px and not at top -> hide
+          if (diff > 10 && currentY > 60) {
+            setHidden(true);
+          } else if (diff < -10) {
+            // scrolled up -> show
+            setHidden(false);
+          }
+          lastScrollY.current = Math.max(0, currentY);
+          ticking.current = false;
+        });
+        ticking.current = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const toggleLogin = () => {
@@ -39,7 +68,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="navbar">
+  <nav className={`navbar ${hidden ? 'hidden' : ''}`}>
         <div className="logo">
           <img src={logo} alt="Logo Odessa" />
           <span>ODESSA</span>
