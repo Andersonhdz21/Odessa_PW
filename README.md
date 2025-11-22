@@ -8,3 +8,7 @@ en la ruta: odessa/backend
 
 en la ruta: odessa/frontend
 ´npm run dev´
+
+>para crear ramas
+
+´git switch -c Feature/Nombre´
