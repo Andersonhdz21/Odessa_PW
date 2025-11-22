@@ -16,6 +16,8 @@ const Navbar = () => {
   const ticking = useRef(false);
   const prevBodyOverflow = useRef('');
 
+  // ... (otros useEffects y funciones sin cambios) ...
+
   useEffect(() => {
     // Verifica si hay un usuario en localStorage
     const usuario = localStorage.getItem('usuario');
@@ -103,36 +105,22 @@ const Navbar = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
     setUsuarioActual(null);
-    setUserMenuOpen(false);
+    setUserMenuOpen(false); // Cierra el menú después de cerrar sesión
   };
 
   return (
     <>
-  <nav className={`navbar ${hidden ? 'hidden' : ''}`}>
+      <nav className={`navbar ${hidden ? 'hidden' : ''}`}>
         <div className="logo">
           <img src={logo} alt="Logo Odessa" />
           <span>ODESSA</span>
         </div>
 
-        {userMenuOpen && usuarioActual && (
-          <>
-            <div className="user-menu-backdrop" onClick={() => setUserMenuOpen(false)} />
-            <div className="user-menu enter">
-            <div className="user-info">
-              <strong>{usuarioActual.username || usuarioActual.nombre || usuarioActual.email}</strong>
-              <div className="user-email">{usuarioActual.email}</div>
-            </div>
-            <div className="user-actions">
-              <button className="logout-btn" onClick={handleLogout}>Cerrar sesión</button>
-            </div>
-          </div>
-          </>
-        )}
-
-        <div
-          className={`backdrop ${menuAbierto ? 'activo' : ''}`}
-          onClick={menuAbierto ? toggleMenu : undefined}
-        ></div>
+        <div className={`menu-hamburguesa ${menuAbierto ? 'activo' : ''}`} onClick={toggleMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
 
         <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`}>
           <li><a href="#">Inicio</a></li>
@@ -143,7 +131,14 @@ const Navbar = () => {
 
         <div className="user-section">
           <div className="user-block">
-            <div className="user-icon" onClick={toggleLogin} role="button" tabIndex={0}>
+            <div 
+              className="user-icon" 
+              onClick={toggleLogin} 
+              role="button" 
+              tabIndex={0}
+              // ⚠️ Añadido para asegurar que el icono no cierre el menú si ya está abierto y se hace clic en él
+              aria-expanded={userMenuOpen}
+            >
               <img src={userIcon} alt="Usuario" />
             </div>
             <div className="user-label">
@@ -153,8 +148,26 @@ const Navbar = () => {
         </div>
       </nav>
 
-
-  
+      {/* 🟢 MENÚ DE USUARIO Y BACKDROP FUERA DEL NAV */}
+      {userMenuOpen && usuarioActual && (
+        <>
+          {/* 1. BACKDROP INVISIBLE PARA DETECTAR CLIC FUERA */}
+          <div className="user-menu-backdrop" onClick={() => setUserMenuOpen(false)} />
+          
+          {/* 2. MENÚ DESPLEGABLE */}
+          <div className="user-menu enter">
+            <div className="user-info">
+              <strong>{usuarioActual.username || usuarioActual.nombre || usuarioActual.email}</strong>
+              <div className="user-email">{usuarioActual.email}</div>
+            </div>
+            <div className="user-actions">
+              <button className="logout-btn" onClick={handleLogout}>Cerrar sesión</button>
+            </div>
+          </div>
+        </>
+      )}
+      
+      {/* Backdrop para el menú hamburguesa */}
       <div
         className={`backdrop ${menuAbierto ? 'activo' : ''}`}
         onClick={menuAbierto ? toggleMenu : undefined}
