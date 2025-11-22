@@ -1,0 +1,92 @@
+/* Importamos la fuente cursiva para el título */
+@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Roboto:wght@400;700&display=swap');
+
+.services-section {
+  padding: 60px 20px;
+  background-color: #fff;
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  /* Ocupa el 100% del alto de la ventana */
+  min-height: 100vh;
+  display: flex;
+  align-items: center; /* centra verticalmente el contenido */
+}
+
+.services-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* --- Títulos --- */
+.services-title {
+  font-family: 'Lobster', cursive; /* Fuente estilo imagen */
+  font-size: 4rem; /* Tamaño grande */
+  color: #000;
+  margin-bottom: 20px;
+  font-weight: 400;
+}
+
+.services-subtitle {
+  font-size: 1.1rem;
+  color: #333;
+  margin-bottom: 60px;
+  font-weight: 500;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --- Grid Layout --- */
+.services-grid {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.service-card {
+  flex: 1;
+  min-width: 250px; /* Para responsividad */
+  display: flex;
+  flex-direction: column; /* corregido: ahora el icono queda encima del texto */
+  align-items: center;
+  text-align: center; /* asegura que el texto quede centrado bajo el icono */
+  padding: 20px;
+}
+
+/* --- Iconos --- */
+.icon-wrapper {
+  color: #3f5a36; /* El color verde oliva de la imagen */
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+/* --- Texto de las tarjetas --- */
+.card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: #222;
+  line-height: 1.6;
+}
+
+.card-text p {
+  margin: 5px 0;
+}
+
+/* --- Responsividad para móviles --- */
+@media (max-width: 768px) {
+  .services-grid {
+    flex-direction: column;
+  }
+  
+  .services-title {
+    font-size: 3rem;
+  }
+}
