@@ -16,14 +16,14 @@ const Navbar = () => {
   const prevBodyOverflow = useRef('');
 
   useEffect(() => {
-    // Verificar si hay un usuario en localStorage
+    // Verifica si hay un usuario en localStorage
     const usuario = localStorage.getItem('usuario');
     if (usuario) {
       setUsuarioActual(JSON.parse(usuario));
     }
   }, []);
 
-  // Hide on scroll down, show on scroll up
+  // esconder y mostrar navbar al hacer scroll
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY || document.documentElement.scrollTop;
@@ -31,11 +31,11 @@ const Navbar = () => {
 
       if (!ticking.current) {
         window.requestAnimationFrame(() => {
-          // if scrolled down more than 20px and not at top -> hide
+          // si escroleo 20px abajo -> esconder
           if (diff > 10 && currentY > 60) {
             setHidden(true);
           } else if (diff < -10) {
-            // scrolled up -> show
+            // scrolled arriba-> mostrar
             setHidden(false);
           }
           lastScrollY.current = Math.max(0, currentY);
@@ -107,7 +107,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-  {/* backdrop siempre renderizado para permitir transiciones de blur/opacidad */}
+  
       <div
         className={`backdrop ${menuAbierto ? 'activo' : ''}`}
         onClick={menuAbierto ? toggleMenu : undefined}

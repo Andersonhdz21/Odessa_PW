@@ -41,6 +41,6 @@
 .hero p {
   font-size: 1.5rem;
   font-style: italic;
-  font-family: 'Lobster', cursive; /* Fuente estilo imagen */
+  font-family: 'Lobster', cursive;
   z-index: 2;
 }
