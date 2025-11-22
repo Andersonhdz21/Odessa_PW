@@ -115,7 +115,9 @@ const Navbar = () => {
         </div>
 
         {userMenuOpen && usuarioActual && (
-          <div className="user-menu enter">
+          <>
+            <div className="user-menu-backdrop" onClick={() => setUserMenuOpen(false)} />
+            <div className="user-menu enter">
             <div className="user-info">
               <strong>{usuarioActual.username || usuarioActual.nombre || usuarioActual.email}</strong>
               <div className="user-email">{usuarioActual.email}</div>
@@ -124,6 +126,7 @@ const Navbar = () => {
               <button className="logout-btn" onClick={handleLogout}>Cerrar sesión</button>
             </div>
           </div>
+          </>
         )}
 
         <div

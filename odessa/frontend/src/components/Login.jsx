@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
 
 const Login = ({ onClose, onSwitchToRegister, onLogin }) => {
@@ -46,9 +46,16 @@ const Login = ({ onClose, onSwitchToRegister, onLogin }) => {
     });
   };
 
+  useEffect(() => {
+    const prev = document.body.style.overflow || '';
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
   return (
     <div className="login-overlay enter" onClick={(e) => {
-      if (e.target.className === "login-overlay") onClose();
+      // cerrar sólo si el click fue en el overlay (no en los hijos)
+      if (e.target === e.currentTarget) onClose();
     }}>
       <div className="login-box enter">
         <button className="close-x" onClick={onClose}>×</button>

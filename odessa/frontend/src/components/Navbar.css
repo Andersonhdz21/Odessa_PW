@@ -308,3 +308,15 @@
     opacity: 1;
   }
 }
+
+/* Backdrop para cerrar user-menu al tocar afuera */
+.user-menu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 1198; /* por debajo del user-menu (1200) */
+  pointer-events: auto;
+}
