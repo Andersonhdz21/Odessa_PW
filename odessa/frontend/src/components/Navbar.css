@@ -73,20 +73,29 @@
 .user-label { font-size: 12px; margin-top: 2px; color: #fff; }
 
 .user-menu {
-  position: absolute;
+  position: fixed;
   right: 16px;
   top: 64px;
-  background: rgba(0,0,0,0.9);
+  /* fondo semitransparente oscuro + blur para afectar el backdrop */
+  background-color: rgb(0, 0, 0);
+
   color: #fff;
   border-radius: 8px;
   padding: 12px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.3);
   z-index: 1200;
   min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* CENTRAR contenido dentro del menú */
+  text-align: center;
+  overflow: visible;
 }
-.user-menu .user-info { margin-bottom: 8px; align-items: center; }
+
+
+.user-menu .user-info { display:grid; align-items:center;  gap:8px;margin-top: 20px; margin-bottom: 30px; }
 .user-menu .user-email { font-size: 12px; opacity: 0.85; }
-.logout-btn { background: #e03e2d; color: white; border: none; padding: 8px 10px; border-radius: 6px; cursor:pointer; }
+.logout-btn { background: #e03e2d; color: white; border: none; padding: 8px 10px; border-radius: 6px; margin-bottom: 20px; cursor:pointer; }
 .logout-btn:hover { opacity: 0.9; }
 
 .nombre-usuario {
@@ -278,4 +287,24 @@
 .navbar.hidden {
   transform: translateY(-130%);
   pointer-events: none;
+}
+
+/* Animación de entrada para user-menu */
+.user-menu.enter {
+  animation: userMenuIn 260ms cubic-bezier(.2,.9,.2,1) both;
+}
+
+@keyframes userMenuIn {
+  0% {
+    transform: translateY(-6px) scale(0.98);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(2px) scale(1.01);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }

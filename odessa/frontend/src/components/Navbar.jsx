@@ -114,11 +114,22 @@ const Navbar = () => {
           <span>ODESSA</span>
         </div>
 
-        <div className={`menu-hamburguesa ${menuAbierto ? 'activo' : ''}`} onClick={toggleMenu}>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+        {userMenuOpen && usuarioActual && (
+          <div className="user-menu enter">
+            <div className="user-info">
+              <strong>{usuarioActual.username || usuarioActual.nombre || usuarioActual.email}</strong>
+              <div className="user-email">{usuarioActual.email}</div>
+            </div>
+            <div className="user-actions">
+              <button className="logout-btn" onClick={handleLogout}>Cerrar sesión</button>
+            </div>
+          </div>
+        )}
+
+        <div
+          className={`backdrop ${menuAbierto ? 'activo' : ''}`}
+          onClick={menuAbierto ? toggleMenu : undefined}
+        ></div>
 
         <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`}>
           <li><a href="#">Inicio</a></li>
@@ -128,7 +139,6 @@ const Navbar = () => {
         </ul>
 
         <div className="user-section">
-          {/* mostrar texto debajo del icono */}
           <div className="user-block">
             <div className="user-icon" onClick={toggleLogin} role="button" tabIndex={0}>
               <img src={userIcon} alt="Usuario" />
@@ -137,21 +147,9 @@ const Navbar = () => {
               {usuarioActual ? (usuarioActual.username || usuarioActual.nombre || usuarioActual.email) : 'Iniciar sesión'}
             </div>
           </div>
-
-          {/* user info dropdown when logged in */}
-          {userMenuOpen && usuarioActual && (
-            <div className="user-menu">
-              <div className="user-info">
-                <strong>{usuarioActual.username || usuarioActual.nombre || usuarioActual.email}</strong>
-                <div className="user-email">{usuarioActual.email}</div>
-              </div>
-              <div className="user-actions">
-                <button className="logout-btn" onClick={handleLogout}>Cerrar sesión</button>
-              </div>
-            </div>
-          )}
         </div>
       </nav>
+
 
   
       <div

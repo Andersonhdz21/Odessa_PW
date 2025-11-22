@@ -47,10 +47,10 @@ const Login = ({ onClose, onSwitchToRegister, onLogin }) => {
   };
 
   return (
-    <div className="login-overlay" onClick={(e) => {
+    <div className="login-overlay enter" onClick={(e) => {
       if (e.target.className === "login-overlay") onClose();
     }}>
-      <div className="login-box">
+      <div className="login-box enter">
         <button className="close-x" onClick={onClose}>×</button>
         <h2>Iniciar Sesión</h2>
         <form onSubmit={handleSubmit}>
