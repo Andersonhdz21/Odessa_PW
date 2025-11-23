@@ -149,8 +149,8 @@ const Navbar = () => {
           <span></span>
         </div>
 
-        <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`}>
-          <li><a href="#">Inicio</a></li>
+        <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`} onClick={toggleMenu}>
+          <li><a href="#services-section">Inicio</a></li>
           <li><a href="#">Lotificaciones</a></li>
           <li><a href="#">Contáctanos</a></li>
           <li><a href="#">Preguntas</a></li>
