@@ -19,10 +19,10 @@ const Footer = () => {
                     <p className="footer-tagline">Un lugar tranquilo para vivir</p>
 
                     <nav className="footer-nav">
-                        <a href="/inicio" className="nav-item">Inicio</a>
-                        <a href="/lotes" className="nav-item">Lotes</a>
-                        <a href="/cotizacion" className="nav-item">Cotización</a>
-                        <a href="/preguntas" className="nav-item">Preguntas</a>
+                        <a href="#services-section" className="nav-item">Inicio</a>
+                        <a href="#" className="nav-item">Lotes</a>
+                        <a href="#" className="nav-item">Cotización</a>
+                        <a href="#" className="nav-item">Preguntas</a>
                     </nav>
                 </div>
 
