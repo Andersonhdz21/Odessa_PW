@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
 /* --- HERO SECTION --- */
 .hero {
@@ -41,6 +41,6 @@
 .hero p {
   font-size: 1.5rem;
   font-style: italic;
-  font-family: 'Lobster', cursive;
+  font-family: 'Pacifico';
   z-index: 2;
 }
