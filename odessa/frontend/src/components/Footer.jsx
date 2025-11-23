@@ -43,8 +43,8 @@ const Footer = () => {
 
                 <div className="footer-bottom-line"></div>
                 <div className="footer-icons">
-                    {/* <a
-                        href="https://wa.me/50376908078"
+                    <a
+                        href="https://wa.me/50360622144"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -53,11 +53,11 @@ const Footer = () => {
                             alt="Icono de WhatsApp"
                             className="footer-icon whatsapp-icon"
                         />
-                    </a> */}
+                    </a>
                 </div>
 
                 <div className="footer-copyright">
-                    <p>&copy; 2025, ODESSA.</p>
+                    <p>&copy; 2025, ODESSA S.A. de C.V.</p>
                 </div>
             </div>
         </footer>
