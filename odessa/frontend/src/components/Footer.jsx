@@ -1,7 +1,7 @@
 // src/components/Footer.jsx
 
 import React from 'react';
-import './footer.css';
+import './Footer.css';
 import WhatsappIcon from '../assets/whatsapp-icon.svg';
 
 const Footer = () => {
