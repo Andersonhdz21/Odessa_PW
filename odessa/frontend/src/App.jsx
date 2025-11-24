@@ -12,7 +12,7 @@ function App() {
       <Navbar />
       <Hero />
       <Services />
-      <FAQ />        {/* ← AÑADIDO */}
+      <FAQ />
       <Footer />
     </>
   );
