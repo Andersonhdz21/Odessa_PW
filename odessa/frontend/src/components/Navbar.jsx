@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { NavLink } from 'react-router-dom';
 import "./Navbar.css";
 import logo from "../assets/logo.png";
 import userIcon from "../assets/user-icon.png";
@@ -8,7 +9,7 @@ import Register from "./Register";
 const Navbar = () => {
   const [mostrarLogin, setMostrarLogin] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false); 
+  const [isClosing, setIsClosing] = useState(false);
   const [mostrarRegister, setMostrarRegister] = useState(false);
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -16,29 +17,27 @@ const Navbar = () => {
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
   const prevBodyOverflow = useRef('');
-  
-  const CLOSE_ANIMATION_DURATION = 300; //animacion de cierre (300ms)
+
+  const CLOSE_ANIMATION_DURATION = 300;
 
   const closeUserMenu = () => {
-    if (isClosing) return; 
+    if (isClosing) return;
 
     setIsClosing(true);
-    
+
     setTimeout(() => {
       setUserMenuOpen(false);
-      setIsClosing(false); 
+      setIsClosing(false);
     }, CLOSE_ANIMATION_DURATION);
   };
 
   useEffect(() => {
-    // Verifica si hay un usuario en localStorage
     const usuario = localStorage.getItem('usuario');
     if (usuario) {
       setUsuarioActual(JSON.parse(usuario));
     }
   }, []);
 
-  // esconder y mostrar navbar al hacer scroll
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY || document.documentElement.scrollTop;
@@ -46,11 +45,9 @@ const Navbar = () => {
 
       if (!ticking.current) {
         window.requestAnimationFrame(() => {
-          // si escroleo 20px abajo -> esconder
           if (diff > 10 && currentY > 60) {
             setHidden(true);
           } else if (diff < -10) {
-            // scrolled arriba-> mostrar
             setHidden(false);
           }
           lastScrollY.current = Math.max(0, currentY);
@@ -63,22 +60,21 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  //cerrar menu al hacer scroll
+
   useEffect(() => {
     if (!userMenuOpen) return;
-    
+
     const closeMenuOnScroll = () => {
-        closeUserMenu(); // Usa la función de cierre animado
+      closeUserMenu();
     };
 
     window.addEventListener('scroll', closeMenuOnScroll, { once: true });
-    
+
     return () => {
-        window.removeEventListener('scroll', closeMenuOnScroll);
+      window.removeEventListener('scroll', closeMenuOnScroll);
     };
   }, [userMenuOpen]);
 
-  // bloquear scroll del body cuando el menú hamburguesa está abierto
   useEffect(() => {
     if (menuAbierto) {
       prevBodyOverflow.current = document.body.style.overflow || '';
@@ -90,7 +86,6 @@ const Navbar = () => {
   }, [menuAbierto]);
 
   const toggleLogin = () => {
-    // Si hay usuario, abre/cierra el menú de usuario.
     if (usuarioActual) {
       if (userMenuOpen) {
         closeUserMenu();
@@ -116,7 +111,7 @@ const Navbar = () => {
     setMenuAbierto(!menuAbierto);
     setMostrarLogin(false);
     setMostrarRegister(false);
-    closeUserMenu(); 
+    closeUserMenu();
   };
 
   const handleLoginSuccess = (user) => {
@@ -149,19 +144,36 @@ const Navbar = () => {
           <span></span>
         </div>
 
-        <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`} onClick={toggleMenu}>
-          <li><a href="#services-section">Inicio</a></li>
-          <li><a href="#">Lotificaciones</a></li>
-          <li><a href="#">Contáctanos</a></li>
+        <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`}>
+          <li>
+            <NavLink
+              to="/"
+              className={({ isActive }) => isActive ? 'active-link' : ''}
+              onClick={toggleMenu}
+              end
+            >
+              Inicio
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/lotificaciones"
+              className={({ isActive }) => isActive ? 'active-link' : ''}
+              onClick={toggleMenu}
+            >
+              Lotificaciones
+            </NavLink>
+          </li>
+          <li><a href="#contact-title" onClick={toggleMenu}>Contáctanos</a></li>
           <li><a href="#">Preguntas</a></li>
         </ul>
 
         <div className="user-section">
           <div className="user-block">
-            <div 
-              className="user-icon" 
-              onClick={toggleLogin} 
-              role="button" 
+            <div
+              className="user-icon"
+              onClick={toggleLogin}
+              role="button"
               tabIndex={0}
               aria-expanded={userMenuOpen}
             >
@@ -177,8 +189,8 @@ const Navbar = () => {
       {(userMenuOpen || isClosing) && usuarioActual && (
         <>
           <div className="user-menu-backdrop" onClick={closeUserMenu} />
-          
-          <div className={`user-menu ${!isClosing ? 'enter' : 'out'}`}> 
+
+          <div className={`user-menu ${!isClosing ? 'enter' : 'out'}`}>
             <div className="user-info">
               <strong>{usuarioActual.username || usuarioActual.nombre || usuarioActual.email}</strong>
               <div className="user-email">{usuarioActual.email}</div>
@@ -189,8 +201,7 @@ const Navbar = () => {
           </div>
         </>
       )}
-      
-      {/* Backdrop para el menú hamburguesa */}
+
       <div
         className={`backdrop ${menuAbierto ? 'activo' : ''}`}
         onClick={menuAbierto ? toggleMenu : undefined}
@@ -203,7 +214,7 @@ const Navbar = () => {
           onLogin={handleLoginSuccess}
         />
       )}
-      
+
       {mostrarRegister && (
         <Register
           onClose={toggleRegister}
