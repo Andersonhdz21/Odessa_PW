@@ -1,38 +1,95 @@
 const { getPool, sql } = require('../config/db');
 const queries = require('../models/sqlQueries');
 
-const createLot = async (req, res) => {
+async function listLots(req, res) {
   try {
-    const { name, location, price, size, description } = req.body;
-    if (!name || !price || !size) {
-      return res.status(400).json({ message: 'Faltan datos del lote' });
+    const pool = await getPool();
+    const result = await pool.request().query(queries.getAllLots);
+    return res.json(result.recordset || []);
+  } catch (err) {
+    console.error('listLots error:', err);
+    return res.status(500).json({ message: 'Error obteniendo lotes' });
+  }
+}
+
+async function getLot(req, res) {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+
+    const pool = await getPool();
+    const result = await pool.request().input('id', sql.Int, id).query(queries.getLotById);
+    const lot = result.recordset && result.recordset[0];
+    if (!lot) return res.status(404).json({ message: 'Lote no encontrado' });
+    return res.json(lot);
+  } catch (err) {
+    console.error('getLot error:', err);
+    return res.status(500).json({ message: 'Error obteniendo lote' });
+  }
+}
+
+async function createLot(req, res) {
+  try {
+    const { name, location, price, size, description = null } = req.body;
+    if (!name || !location || price == null || size == null) {
+      return res.status(400).json({ message: 'Faltan datos obligatorios (name, location, price, size)' });
     }
 
     const pool = await getPool();
     const result = await pool.request()
-      .input('name', sql.VarChar, name)
-      .input('location', sql.VarChar, location)
-      .input('price', sql.Decimal(18, 2), price)
-      .input('size', sql.Decimal(18, 2), size)
-      .input('description', sql.Text, description)
+      .input('name', sql.VarChar(255), name)
+      .input('location', sql.VarChar(255), location)
+      .input('price', sql.Float, parseFloat(price))
+      .input('size', sql.Float, parseFloat(size))
+      .input('description', sql.VarChar(sql.MAX), description)
       .query(queries.createLot);
 
-    res.status(201).json({ id: result.recordset[0].id, name });
+    const created = result.recordset && result.recordset[0];
+    return res.status(201).json(created || null);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error al crear el lote' });
+    console.error('createLot error:', err);
+    return res.status(500).json({ message: 'Error creando lote' });
   }
-};
+}
 
-const getLots = async (req, res) => {
+async function updateLot(req, res) {
   try {
-    const pool = await getPool();
-    const result = await pool.request().query(queries.getAllLots);
-    res.json(result.recordset);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error al obtener los lotes' });
-  }
-};
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
 
-module.exports = { createLot, getLots };
+    const { name, location, price, size, description } = req.body;
+
+    const pool = await getPool();
+    const result = await pool.request()
+      .input('id', sql.Int, id)
+      .input('name', sql.VarChar(255), name)
+      .input('location', sql.VarChar(255), location)
+      .input('price', sql.Float, price != null ? parseFloat(price) : null)
+      .input('size', sql.Float, size != null ? parseFloat(size) : null)
+      .input('description', sql.VarChar(sql.MAX), description)
+      .query(queries.updateLot);
+
+    const updated = result.recordset && result.recordset[0];
+    if (!updated) return res.status(404).json({ message: 'Lote no encontrado o no modificado' });
+    return res.json(updated);
+  } catch (err) {
+    console.error('updateLot error:', err);
+    return res.status(500).json({ message: 'Error actualizando lote' });
+  }
+}
+
+async function deleteLot(req, res) {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
+
+    const pool = await getPool();
+    await pool.request().input('id', sql.Int, id).query(queries.deleteLot);
+    return res.json({ message: 'Lote eliminado' });
+  } catch (err) {
+    console.error('deleteLot error:', err);
+    return res.status(500).json({ message: 'Error eliminando lote' });
+  }
+}
+
+module.exports = { listLots, getLot, createLot, updateLot, deleteLot };

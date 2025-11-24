@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
 
-const Login = ({ onClose, onSwitchToRegister }) => {
+const Login = ({ onClose, onSwitchToRegister, onLogin }) => {
   const [formData, setFormData] = useState({
     email: "",
-    name: "",
-    password: "",
-    confirmPassword: ""
+    password: ""
   });
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
+
     try {
       const response = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
@@ -23,13 +25,19 @@ const Login = ({ onClose, onSwitchToRegister }) => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem("token", data.token);
+
+        if (data.user) {
+          localStorage.setItem('usuario', JSON.stringify(data.user));
+        }
+
+        if (onLogin) onLogin(data.user || null);
         onClose();
       } else {
-        const error = await response.json();
-        alert(error.message || "Error al iniciar sesión");
+        
+        setErrorMessage("Usuario o contraseña incorrectos. Si no tienes cuenta, regístrate primero.");
       }
     } catch (error) {
-      alert("Error al conectar con el servidor");
+      setErrorMessage("Error al conectar con el servidor.");
     }
   };
 
@@ -38,15 +46,31 @@ const Login = ({ onClose, onSwitchToRegister }) => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+
+    if (errorMessage) setErrorMessage("");
   };
 
+  useEffect(() => {
+    const prev = document.body.style.overflow || '';
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
   return (
-    <div className="login-overlay" onClick={(e) => {
-      if (e.target.className === "login-overlay") onClose();
+    <div className="login-overlay enter" onClick={(e) => {
+      if (e.target === e.currentTarget) onClose();
     }}>
-      <div className="login-box">
+      <div className="login-box enter">
         <button className="close-x" onClick={onClose}>×</button>
+
         <h2>Iniciar Sesión</h2>
+
+        {errorMessage && (
+          <div className="login-error-message">
+            {errorMessage}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -62,7 +86,9 @@ const Login = ({ onClose, onSwitchToRegister }) => {
             value={formData.password}
             onChange={handleChange}
           />
+
           <button type="submit">Entrar</button>
+
           <p className="switch-form">
             ¿Aún no tienes cuenta? <span onClick={onSwitchToRegister}>Regístrate</span>
           </p>
@@ -70,5 +96,6 @@ const Login = ({ onClose, onSwitchToRegister }) => {
       </div>
     </div>
   );
-}
+};
+
 export default Login;
