@@ -154,7 +154,7 @@ const Navbar = () => {
         <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`} >
           <li><a href="#services-section">Inicio</a></li>
           <li><a href="#">Lotificaciones</a></li>
-          <li><a href="#">Contáctanos</a></li>
+          <li><a href="#footer-section">Contáctanos</a></li>
           <li><a href="#faq-section">Preguntas</a></li>
         </ul>
 

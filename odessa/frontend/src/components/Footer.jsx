@@ -12,7 +12,8 @@ const Footer = () => {
     };
 
     return (
-        <footer className="footer-container">
+        <footer id="footer-section" className="footer-container">
+
             <div className="footer-content-wrapper">
                 <div className="footer-left">
                     <h1 className="footer-logo">ODESSA</h1>
