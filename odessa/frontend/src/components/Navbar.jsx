@@ -5,6 +5,8 @@ import userIcon from "../assets/user-icon.png";
 import Login from "./Login";
 import Register from "./Register";
 
+
+
 const Navbar = () => {
   const [mostrarLogin, setMostrarLogin] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -149,11 +151,11 @@ const Navbar = () => {
           <span></span>
         </div>
 
-        <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`} onClick={toggleMenu}>
+        <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`} >
           <li><a href="#services-section">Inicio</a></li>
           <li><a href="#">Lotificaciones</a></li>
           <li><a href="#">Contáctanos</a></li>
-          <li><a href="#">Preguntas</a></li>
+          <li><a href="#faq-section">Preguntas</a></li>
         </ul>
 
         <div className="user-section">
