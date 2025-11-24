@@ -8,10 +8,18 @@ export default function FAQ() {
       <div className="faq-container">
 
         <div className="faq-item">
+          <h3 className="faq-question">¿Cuales son los horarios de atencion?</h3>
+          <p className="faq-answer">
+            Nuestro horario de atención es de lunes a viernes, de 8:30 AM a 4:30 PM. 
+            Estamos disponibles para responder tus consultas y ayudarte en lo que necesites durante estos horarios.
+            </p>
+        </div>
+
+        <div className="faq-item">
           <h3 className="faq-question">¿Los lotes cuentan con acceso a electricidad y agua potable?</h3>
           <p className="faq-answer">
             Sí. Todos nuestros lotes están diseñados para ofrecerte comodidad desde el primer día. 
-            El servicio de agua se contrata fácilmente con <strong>Andrómeda Medusa</strong>, una empresa 
+            El servicio de agua se contrata fácilmente con <strong>CLESA</strong>, una empresa 
             reconocida por su excelente cobertura. La electricidad también está disponible para instalación inmediata.
           </p>
         </div>
