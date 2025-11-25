@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Slider from 'react-slick';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import 'slick-carousel/slick/slick.css';
@@ -30,41 +30,48 @@ const Lotificaciones = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const [deptOpen, setDeptOpen] = useState(false);
   const [selectedDept, setSelectedDept] = useState("La Libertad");
+  
+  // Inicializamos el estado basándonos directamente en el ancho actual
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
+    const handleResize = () => {
+      const mobileCheck = window.innerWidth < 768;
+      setIsMobile(mobileCheck);
+    };
+
+    window.addEventListener('resize', handleResize);
+    
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDeptOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
+    
+    // Llamada inicial para asegurar estado correcto al montar
+    handleResize();
+
     return () => {
+      window.removeEventListener('resize', handleResize);
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
-  const settings = {
+  const settings = useMemo(() => ({
     className: "center",
     centerMode: true,
     infinite: true,
     centerPadding: "0px",
-    slidesToShow: 3,
+    // Aquí forzamos manualmente la cantidad de slides según el estado
+    slidesToShow: isMobile ? 1 : 3,
     speed: 500,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     beforeChange: (_, next) => setActiveSlide(next),
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          centerMode: true,
-          centerPadding: "0px", 
-        }
-      }
-    ]
-  };
+    // Eliminamos el objeto 'responsive' interno de slick para evitar conflictos
+  }), [isMobile]);
 
   const handleSelectDept = (dept) => {
     setSelectedDept(dept);
@@ -105,7 +112,8 @@ const Lotificaciones = () => {
       </div>
 
       <div className="carousel-wrapper">
-        <Slider {...settings}>
+        {/* La key fuerza a React a destruir y recrear el componente al cambiar de modo */}
+        <Slider {...settings} key={isMobile ? 'mobile' : 'desktop'}>
           {lotificacionesData.map((item, index) => (
             <div key={item.id} className="slide-item-container">
               <div className={`slide-card ${index === activeSlide ? 'active' : ''}`}>
