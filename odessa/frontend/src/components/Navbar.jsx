@@ -21,7 +21,8 @@ const Navbar = () => {
   
   const CLOSE_ANIMATION_DURATION = 300; //animacion de cierre (300ms)
 
-  const closeUserMenu = () => {
+const closeUserMenu = () => {
+    if (!userMenuOpen) return; 
     if (isClosing) return; 
 
     setIsClosing(true);
