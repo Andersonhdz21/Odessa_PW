@@ -13,10 +13,26 @@ module.exports = {
   `,
   createLot: `
     INSERT INTO Lots (name, location, price, size, description)
+    OUTPUT INSERTED.*
     VALUES (@name, @location, @price, @size, @description);
-    SELECT SCOPE_IDENTITY() AS id;
   `,
   getAllLots: `
-    SELECT * FROM Lots;
+    SELECT * FROM Lots ORDER BY id ASC;
+  `,
+  getLotById: `
+    SELECT * FROM Lots WHERE id = @id;
+  `,
+  updateLot: `
+    UPDATE Lots
+    SET name = @name,
+        location = @location,
+        price = @price,
+        size = @size,
+        description = @description
+    WHERE id = @id;
+    SELECT * FROM Lots WHERE id = @id;
+  `,
+  deleteLot: `
+    DELETE FROM Lots WHERE id = @id;
   `
 };
