@@ -5,8 +5,6 @@ import userIcon from "../assets/user-icon.png";
 import Login from "./Login";
 import Register from "./Register";
 
-
-
 const Navbar = () => {
   const [mostrarLogin, setMostrarLogin] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -19,9 +17,9 @@ const Navbar = () => {
   const ticking = useRef(false);
   const prevBodyOverflow = useRef('');
   
-  const CLOSE_ANIMATION_DURATION = 300; //animacion de cierre (300ms)
+  const CLOSE_ANIMATION_DURATION = 300; 
 
-const closeUserMenu = () => {
+  const closeUserMenu = () => {
     if (!userMenuOpen) return; 
     if (isClosing) return; 
 
@@ -34,14 +32,12 @@ const closeUserMenu = () => {
   };
 
   useEffect(() => {
-    // Verifica si hay un usuario en localStorage
     const usuario = localStorage.getItem('usuario');
     if (usuario) {
       setUsuarioActual(JSON.parse(usuario));
     }
   }, []);
 
-  // esconder y mostrar navbar al hacer scroll
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY || document.documentElement.scrollTop;
@@ -49,11 +45,9 @@ const closeUserMenu = () => {
 
       if (!ticking.current) {
         window.requestAnimationFrame(() => {
-          // si escroleo 20px abajo -> esconder
           if (diff > 10 && currentY > 60) {
             setHidden(true);
           } else if (diff < -10) {
-            // scrolled arriba-> mostrar
             setHidden(false);
           }
           lastScrollY.current = Math.max(0, currentY);
@@ -66,22 +60,18 @@ const closeUserMenu = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  //cerrar menu al hacer scroll
+
   useEffect(() => {
     if (!userMenuOpen) return;
-    
     const closeMenuOnScroll = () => {
-        closeUserMenu(); // Usa la función de cierre animado
+        closeUserMenu(); 
     };
-
     window.addEventListener('scroll', closeMenuOnScroll, { once: true });
-    
     return () => {
         window.removeEventListener('scroll', closeMenuOnScroll);
     };
   }, [userMenuOpen]);
 
-  // bloquear scroll del body cuando el menú hamburguesa está abierto
   useEffect(() => {
     if (menuAbierto) {
       prevBodyOverflow.current = document.body.style.overflow || '';
@@ -93,7 +83,6 @@ const closeUserMenu = () => {
   }, [menuAbierto]);
 
   const toggleLogin = () => {
-    // Si hay usuario, abre/cierra el menú de usuario.
     if (usuarioActual) {
       if (userMenuOpen) {
         closeUserMenu();
@@ -115,11 +104,20 @@ const closeUserMenu = () => {
     setMenuAbierto(false);
   };
 
+  // Esta función es para el botón de hamburguesa (abre y cierra)
   const toggleMenu = () => {
     setMenuAbierto(!menuAbierto);
     setMostrarLogin(false);
     setMostrarRegister(false);
     closeUserMenu(); 
+  };
+
+  // NUEVA FUNCIÓN: Solo cierra el menú si ya está abierto.
+  // Si estás en desktop (menuAbierto es false), esta función no hace nada.
+  const handleLinkClick = () => {
+    if (menuAbierto) {
+      toggleMenu();
+    }
   };
 
   const handleLoginSuccess = (user) => {
@@ -146,17 +144,19 @@ const closeUserMenu = () => {
           <span>ODESSA</span>
         </div>
 
+        {/* El botón de hamburguesa sigue usando toggleMenu */}
         <div className={`menu-hamburguesa ${menuAbierto ? 'activo' : ''}`} onClick={toggleMenu}>
           <span></span>
           <span></span>
           <span></span>
         </div>
 
-        <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`} onClick={toggleMenu} >
+        {/* CAMBIO AQUÍ: Usamos handleLinkClick en lugar de toggleMenu */}
+        <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`} onClick={handleLinkClick}>
           <li><a href="#services-section">Inicio</a></li>
           <li><a href="#Lotificaciones-section">Lotificaciones</a></li>
-          <li><a href="#footer-section">Contáctanos</a></li>
           <li><a href="#faq-section">Preguntas</a></li>
+          <li><a href="#footer-section">Contáctanos</a></li>
         </ul>
 
         <div className="user-section">
@@ -180,7 +180,6 @@ const closeUserMenu = () => {
       {(userMenuOpen || isClosing) && usuarioActual && (
         <>
           <div className="user-menu-backdrop" onClick={closeUserMenu} />
-          
           <div className={`user-menu ${!isClosing ? 'enter' : 'out'}`}> 
             <div className="user-info">
               <strong>{usuarioActual.username || usuarioActual.nombre || usuarioActual.email}</strong>
