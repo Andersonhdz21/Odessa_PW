@@ -104,7 +104,6 @@ const Navbar = () => {
     setMenuAbierto(false);
   };
 
-  // Esta función es para el botón de hamburguesa (abre y cierra)
   const toggleMenu = () => {
     setMenuAbierto(!menuAbierto);
     setMostrarLogin(false);
@@ -112,8 +111,6 @@ const Navbar = () => {
     closeUserMenu(); 
   };
 
-  // NUEVA FUNCIÓN: Solo cierra el menú si ya está abierto.
-  // Si estás en desktop (menuAbierto es false), esta función no hace nada.
   const handleLinkClick = () => {
     if (menuAbierto) {
       toggleMenu();
@@ -144,14 +141,12 @@ const Navbar = () => {
           <span>ODESSA</span>
         </div>
 
-        {/* El botón de hamburguesa sigue usando toggleMenu */}
         <div className={`menu-hamburguesa ${menuAbierto ? 'activo' : ''}`} onClick={toggleMenu}>
           <span></span>
           <span></span>
           <span></span>
         </div>
 
-        {/* CAMBIO AQUÍ: Usamos handleLinkClick en lugar de toggleMenu */}
         <ul className={`nav-links ${menuAbierto ? 'activo' : ''}`} onClick={handleLinkClick}>
           <li><a href="#services-section">Inicio</a></li>
           <li><a href="#Lotificaciones-section">Lotificaciones</a></li>
@@ -192,7 +187,6 @@ const Navbar = () => {
         </>
       )}
       
-      {/* Backdrop para el menú hamburguesa */}
       <div
         className={`backdrop ${menuAbierto ? 'activo' : ''}`}
         onClick={menuAbierto ? toggleMenu : undefined}
