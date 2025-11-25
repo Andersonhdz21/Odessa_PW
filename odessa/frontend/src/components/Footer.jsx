@@ -1,11 +1,8 @@
-// src/components/Footer.jsx
-
 import React from 'react';
 import './Footer.css';
 import WhatsappIcon from '../assets/whatsapp-icon.svg';
 
 const Footer = () => {
-    // Función para manejar la acción de copiar el número de teléfono
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text);
         alert(`Número copiado: ${text}`);
@@ -13,7 +10,6 @@ const Footer = () => {
 
     return (
         <footer id="footer-section" className="footer-container">
-
             <div className="footer-content-wrapper">
                 <div className="footer-left">
                     <h1 className="footer-logo">ODESSA</h1>
@@ -21,7 +17,7 @@ const Footer = () => {
 
                     <nav className="footer-nav">
                         <a href="#services-section" className="nav-item">Inicio</a>
-                        <a href="#" className="nav-item">Lotes</a>
+                        <a href="#Lotificaciones-section" className="nav-item">Lotificaciones</a>
                         <a href="#" className="nav-item">Cotización</a>
                     </nav>
                 </div>
@@ -39,9 +35,16 @@ const Footer = () => {
                             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
                     </div>
+
+                    <div className="schedule-box">
+                        <p className="schedule-label">Horario de atención</p>
+                        <p className="schedule-time">Lunes a Viernes</p>
+                        <p className="schedule-time">8:30 AM - 4:30 PM</p>
+                    </div>
                 </div>
 
                 <div className="footer-bottom-line"></div>
+                
                 <div className="footer-icons">
                     <a
                         href="https://wa.me/50360622144"
