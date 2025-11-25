@@ -1,10 +1,12 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config({ path: '../.env' });
 
 const PORT = process.env.PORT || 5001;
 
+app.use(cors());
 app.use(express.json());
 
 // health check root
