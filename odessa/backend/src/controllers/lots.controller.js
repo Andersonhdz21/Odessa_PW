@@ -4,7 +4,18 @@ const queries = require('../models/sqlQueries');
 async function listLots(req, res) {
   try {
     const pool = await getPool();
-    const result = await pool.request().query(queries.getAllLots);
+    let result;
+
+    const { subdivisionId } = req.query;
+
+    if (subdivisionId) {
+      result = await pool.request()
+        .input('id_subdivisions', sql.Int, subdivisionId)
+        .query(queries.getLotsBySubdivision);
+    } else {
+      result = await pool.request().query(queries.getAllLots);
+    }
+
     return res.json(result.recordset || []);
   } catch (err) {
     console.error('listLots error:', err);
@@ -20,6 +31,7 @@ async function getLot(req, res) {
     const pool = await getPool();
     const result = await pool.request().input('id', sql.Int, id).query(queries.getLotById);
     const lot = result.recordset && result.recordset[0];
+    
     if (!lot) return res.status(404).json({ message: 'Lote no encontrado' });
     return res.json(lot);
   } catch (err) {
@@ -30,18 +42,20 @@ async function getLot(req, res) {
 
 async function createLot(req, res) {
   try {
-    const { name, location, price, size, description = null } = req.body;
-    if (!name || !location || price == null || size == null) {
-      return res.status(400).json({ message: 'Faltan datos obligatorios (name, location, price, size)' });
+    const { id_subdivisions, name, location, price, size, description = null } = req.body;
+
+    if (!id_subdivisions || !name || !location || price == null || size == null) {
+      return res.status(400).json({ message: 'Faltan datos obligatorios (id_subdivisions, name, location, price, size)' });
     }
 
     const pool = await getPool();
     const result = await pool.request()
-      .input('name', sql.VarChar(255), name)
-      .input('location', sql.VarChar(255), location)
-      .input('price', sql.Float, parseFloat(price))
-      .input('size', sql.Float, parseFloat(size))
-      .input('description', sql.VarChar(sql.MAX), description)
+      .input('id_subdivisions', sql.Int, parseInt(id_subdivisions)) 
+      .input('name', sql.VarChar(30), name) 
+      .input('location', sql.VarChar(20), location) 
+      .input('price', sql.Decimal(10, 2), parseFloat(price)) 
+      .input('size', sql.Decimal(10, 2), parseFloat(size))   
+      .input('description', sql.VarChar(30), description)   
       .query(queries.createLot);
 
     const created = result.recordset && result.recordset[0];
@@ -57,16 +71,18 @@ async function updateLot(req, res) {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) return res.status(400).json({ message: 'ID inválido' });
 
-    const { name, location, price, size, description } = req.body;
+
+    const { name, location, price, size, description, estatus } = req.body;
 
     const pool = await getPool();
     const result = await pool.request()
       .input('id', sql.Int, id)
-      .input('name', sql.VarChar(255), name)
-      .input('location', sql.VarChar(255), location)
-      .input('price', sql.Float, price != null ? parseFloat(price) : null)
-      .input('size', sql.Float, size != null ? parseFloat(size) : null)
-      .input('description', sql.VarChar(sql.MAX), description)
+      .input('name', sql.VarChar(30), name)
+      .input('location', sql.VarChar(20), location)
+      .input('price', sql.Decimal(10, 2), price != null ? parseFloat(price) : null)
+      .input('size', sql.Decimal(10, 2), size != null ? parseFloat(size) : null)
+      .input('description', sql.VarChar(30), description)
+      .input('estatus', sql.VarChar(20), estatus || 'disponible')
       .query(queries.updateLot);
 
     const updated = result.recordset && result.recordset[0];
