@@ -72,7 +72,7 @@ const Lotificaciones = () => {
   };
 
   return (
-    <section className="main-container">
+    <section id="Lotificaciones-section" className="lot-container">
       <div className="top-header-area">
         <div className="title-ribbon">
           <h1>Lotificaciones</h1>

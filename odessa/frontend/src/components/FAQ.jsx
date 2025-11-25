@@ -13,11 +13,6 @@ export default function FAQ() {
 
   const data = [
     {
-      question: "¿Cuales son los horarios de atencion?",
-      answer:
-        "Nuestro horario de atención es de lunes a viernes, de 8:30 AM a 4:30 PM. Estamos disponibles para responder tus consultas y ayudarte en lo que necesites durante estos horarios.",
-    },
-    {
       question: "¿Los lotes cuentan con acceso a electricidad y agua potable?",
       answer: (
         <>
