@@ -21,7 +21,7 @@ export default function FAQ() {
       question: "¿Los lotes cuentan con acceso a electricidad y agua potable?",
       answer: (
         <>
-          Sí. Todos nuestros lotes están diseñados para ofrecerte comodidad desde el primer día. El servicio de agua se contrata fácilmente con <strong>CLESA</strong>, una empresa reconocida por su excelente cobertura. La electricidad también está disponible para instalación inmediata.
+          Sí. Todos nuestros lotes están diseñados para ofrecerte comodidad desde el primer día. El servicio de agua se contrata fácilmente con <strong>ANDA</strong>, una empresa reconocida por su excelente cobertura. La electricidad también está disponible para instalación inmediata.
         </>
       ),
     },
