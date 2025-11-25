@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react'; // Importamos useEffect y useRef
+import React, { useState, useEffect, useRef } from 'react';
 import Slider from 'react-slick';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 import './Lotificaciones.css';
 
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-
-// Datos ficticios
 const lotificacionesData = [
   { id: 1, name: 'Las Canarias', img: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' },
   { id: 2, name: 'Altos de San Andrés', img: 'https://images.unsplash.com/photo-1591389703635-e15a07b842d7?q=80&w=1033&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
@@ -16,7 +14,6 @@ const lotificacionesData = [
 
 const departamentos = ["La Libertad", "San Salvador", "San Miguel", "Santa Ana"];
 
-// Flechas optimizadas
 const NextArrow = ({ onClick }) => (
   <div className="custom-arrow next-arrow" onClick={onClick}>
     <ChevronRight size={24} color="white" strokeWidth={3} />
@@ -31,31 +28,21 @@ const PrevArrow = ({ onClick }) => (
 
 const Lotificaciones = () => {
   const [activeSlide, setActiveSlide] = useState(0);
-  
-  // Estado para el Menú Desplegable
   const [deptOpen, setDeptOpen] = useState(false);
   const [selectedDept, setSelectedDept] = useState("La Libertad");
-  
-  // Referencia para detectar clics fuera del menú
   const dropdownRef = useRef(null);
 
-  // Hook para detectar clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Si el menú está abierto y el clic fue fuera del componente referenciado
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDeptOpen(false);
       }
     };
-
-    // Agregar el listener al documento
     document.addEventListener("mousedown", handleClickOutside);
-    
-    // Limpiar el listener al desmontar
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dropdownRef]);
+  }, []);
 
   const settings = {
     className: "center",
@@ -66,7 +53,7 @@ const Lotificaciones = () => {
     speed: 500,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
-    beforeChange: (current, next) => setActiveSlide(next),
+    beforeChange: (_, next) => setActiveSlide(next),
     responsive: [
       {
         breakpoint: 768,
@@ -91,7 +78,6 @@ const Lotificaciones = () => {
           <h1>Lotificaciones</h1>
         </div>
         
-        {/* Agregamos la ref={dropdownRef} al contenedor padre del dropdown */}
         <div className="dropdown-wrapper" ref={dropdownRef}>
           <div 
             className={`department-selector ${deptOpen ? 'open' : ''}`} 
@@ -104,8 +90,6 @@ const Lotificaciones = () => {
             />
           </div>
 
-          {/* CAMBIO: Quitamos la condición {deptOpen && ...} para permitir animación de salida.
-              Ahora controlamos la visibilidad con clases CSS. */}
           <div className={`dropdown-menu ${deptOpen ? 'menu-open' : 'menu-closed'}`}>
             {departamentos.map((dept) => (
               <div 
