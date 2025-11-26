@@ -27,22 +27,20 @@ const Lotificaciones = ({ onOpenLogin }) => {
   const [selectedSubdivision, setSelectedSubdivision] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   
-  const [backdropActive, setBackdropActive] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
   const [modalStyles, setModalStyles] = useState(null);
   const [originCoords, setOriginCoords] = useState(null);
+  const [backdropActive, setBackdropActive] = useState(false); 
+  const [showContent, setShowContent] = useState(false); // NUEVO: Controla el texto blanco
 
   const sliderRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
-    
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDeptOpen(false);
       }
     };
-
     const user = localStorage.getItem('usuario');
     if (user) setCurrentUser(JSON.parse(user));
 
@@ -55,6 +53,7 @@ const Lotificaciones = ({ onOpenLogin }) => {
     };
   }, []);
 
+  // Bloqueo de scroll
   useEffect(() => {
     if (selectedSubdivision) {
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -142,25 +141,27 @@ const Lotificaciones = ({ onOpenLogin }) => {
     setOriginCoords(initialStyles);
     setModalStyles(initialStyles);
     setSelectedSubdivision(item);
-
-    setTimeout(() => {
-        setBackdropActive(true);
-    }, 50);
-    
-    const user = localStorage.getItem('usuario');
-    if (user) setCurrentUser(JSON.parse(user));
+    setShowContent(false);
 
     requestAnimationFrame(() => {
-        const finalWidth = Math.min(window.innerWidth * 0.9, 900);
-        const finalHeight = Math.min(window.innerHeight * 0.85, 800);
-        
-        setModalStyles({
-            top: (window.innerHeight - finalHeight) / 2, 
-            left: (window.innerWidth - finalWidth) / 2,
-            width: finalWidth,
-            height: finalHeight,
-            borderRadius: '30px',
-            opacity: 1
+        requestAnimationFrame(() => {
+            setBackdropActive(true);
+
+            const finalWidth = Math.min(window.innerWidth * 0.9, 900);
+            const finalHeight = Math.min(window.innerHeight * 0.85, 800);
+            
+            setModalStyles({
+                top: (window.innerHeight - finalHeight) / 2, 
+                left: (window.innerWidth - finalWidth) / 2,
+                width: finalWidth,
+                height: finalHeight,
+                borderRadius: '30px',
+                opacity: 1
+            });
+
+            setTimeout(() => {
+                setShowContent(true);
+            }, 0);
         });
     });
   };
@@ -170,17 +171,25 @@ const Lotificaciones = ({ onOpenLogin }) => {
         setSelectedSubdivision(null);
         return;
     }
-    setBackdropActive(false); 
-    setIsClosing(true);
-    setModalStyles({ ...originCoords, borderRadius: '20px' });
+    
+    // 1. Ocultar contenido primero (revela la imagen de fondo)
+    setShowContent(false);
+    setBackdropActive(false); // Quitar blur del fondo
 
+    // 2. Esperar a que el contenido se desvanezca antes de encoger
     setTimeout(() => {
-        setSelectedSubdivision(null);
-        setOriginCoords(null);
-        setIsClosing(false);
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-    }, 400);
+        // 3. Encoger la ventana hacia la tarjeta original
+        setModalStyles({ 
+            ...originCoords, 
+            borderRadius: '20px' 
+        });
+
+        setTimeout(() => {
+            setSelectedSubdivision(null);
+            setOriginCoords(null);
+        }, 500);
+
+    }, 100);
   };
 
   const handleCotizar = () => {
@@ -219,23 +228,31 @@ const Lotificaciones = ({ onOpenLogin }) => {
       <div className="carousel-wrapper">
         {processedData.length > 0 ? (
             <Slider ref={sliderRef} {...settings} key={`${selectedDept}-${isMobile ? 'mobile' : 'desktop'}`}>
-            {processedData.map((item, index) => (
-                <div key={index} className="slide-item-container">
-                    <div 
-                      className="slide-card" 
-                      onClick={(e) => handleCardClick(item, e)}
-                    >
-                    <img 
-                        src={item.images} 
-                        alt={item.name} 
-                        onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Sin+Imagen'; }} 
-                    />
-                    <div className="card-overlay">
-                        <span className="location-pill">{item.name}</span>
+            {processedData.map((item, index) => {
+                // LOGICA IMPORTANTE: 
+                // La tarjeta se oculta MIENTRAS haya una subdivisión seleccionada Y sea la misma.
+                // Como selectedSubdivision no se borra hasta el FINAL de la animación de cierre,
+                // esto evita el parpadeo.
+                const isHidden = selectedSubdivision && selectedSubdivision.name === item.name;
+
+                return (
+                    <div key={index} className="slide-item-container">
+                        <div 
+                            className={`slide-card ${isHidden ? 'hidden-card' : ''}`} 
+                            onClick={(e) => handleCardClick(item, e)}
+                        >
+                        <img 
+                            src={item.images} 
+                            alt={item.name} 
+                            onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Sin+Imagen'; }} 
+                        />
+                        <div className="card-overlay">
+                            <span className="location-pill">{item.name}</span>
+                        </div>
+                        </div>
                     </div>
-                    </div>
-                </div>
-            ))}
+                );
+            })}
             </Slider>
         ) : (
             <div style={{ textAlign: 'center', color: 'white', marginTop: '50px', fontSize: '1.2rem' }}>
@@ -261,14 +278,23 @@ const Lotificaciones = ({ onOpenLogin }) => {
                 borderRadius: modalStyles?.borderRadius,
             }}
           >
+            {/* IMAGEN HERO DE FONDO */}
+            <img 
+                src={selectedSubdivision.images} 
+                alt="" 
+                className="hero-image-modal"
+                onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Sin+Imagen'; }}
+            />
+
             <button 
-                className={`close-modal-btn ${isClosing ? 'hiding' : 'showing'}`} 
+                className={`close-modal-btn ${showContent ? 'showing' : 'hiding'}`} 
                 onClick={closeModal}
             >
               <X size={30} strokeWidth={5} color="blue"/>
             </button>
 
-            <div className={`modal-inner-content ${isClosing ? 'hiding' : 'showing'}`}>
+            {/* CONTENIDO QUE TAPA LA IMAGEN SUAVEMENTE */}
+            <div className={`modal-inner-content ${showContent ? 'visible' : 'hidden'}`}>
                 <div className="modal-header">
                     <h2>{selectedSubdivision.name}</h2>
                 </div>
