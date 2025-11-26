@@ -1,67 +1,91 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
 const dotenv = require('dotenv');
+
+//env
 dotenv.config({ path: '../.env' });
 
+const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.use(cors());
+//middlewares
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
 
-// health check root
+//health check
 app.get('/', (req, res) => res.send('API Odessa funcionando correctamente'));
 
-// montar rutas con manejo de error si faltan archivos
+//lots
 try {
   const lotsRoutes = require('./routes/lots.routes');
   app.use('/api/lots', lotsRoutes);
-  console.log('Rutas /api/lots montadas');
+  console.log('✅ Rutas /api/lots montadas');
 } catch (e) {
-  console.warn('No se pudo montar /api/lots:', e.message || e);
+  console.warn('⚠️ No se pudo montar /api/lots:', e.message || e);
 }
 
+//auth
 try {
   const authRoutes = require('./routes/auth.routes');
   app.use('/api/auth', authRoutes);
-  console.log('Rutas /api/auth montadas');
+  console.log('✅ Rutas /api/auth montadas');
 } catch (e) {
-  console.warn('No se pudo montar /api/auth:', e.message || e);
+  console.warn('⚠️ No se pudo montar /api/auth:', e.message || e);
 }
 
-// intentar conexión a la BD al arrancar para log claro
+//subdivisions
+try {
+  const subdivisionsRoutes = require('./routes/subdivisions.routes');
+  app.use('/api/subdivisions', subdivisionsRoutes);
+  console.log('✅ Rutas /api/subdivisions montadas');
+} catch (e) {
+  console.warn('⚠️ No se pudo montar /api/subdivisions:', e.message || e);
+}
+
+//debug
+try {
+  const debugRoutes = require('./routes/debug.routes');
+  app.use('/api/debug', debugRoutes);
+  console.log('✅ Rutas /api/debug montadas');
+} catch (e) {
+  // optional
+}
+
+//db config
 let listened = false;
 const { getPool } = (() => {
   try {
     return require('./config/db');
   } catch (e) {
-    console.warn('No se pudo require ./config/db:', e.message || e);
+    console.warn('⚠️ No se pudo requerir ./config/db:', e.message || e);
     return {};
   }
 })();
 
 async function checkDbAndStart() {
+  //db connection
   if (typeof getPool === 'function') {
     try {
       const pool = await getPool();
-      if (pool) console.log('Conexión a SQL establecida');
+      if (pool) console.log('✅ Conexión a SQL establecida');
     } catch (err) {
-      console.error('Error conectando a SQL en arranque:', err && err.message ? err.message : err);
-      // continuar de todos modos para poder inspeccionar rutas/puerto
+      console.error('❌ Error conectando a SQL en arranque:', err && err.message ? err.message : err);
     }
   } else {
-    console.warn('getPool no disponible: no se intentó conexión a SQL');
+    console.warn('⚠️ getPool no disponible');
   }
 
-  // start server
+  //server start
   const server = app.listen(PORT, () => {
     listened = true;
-    console.log(`Backend escuchando en http://localhost:${PORT}`);
+    console.log(`🚀 Backend escuchando en http://localhost:${PORT}`);
   });
 
-  // trap errores del server
   server.on('error', (err) => {
-    console.error('Error en server:', err && err.message ? err.message : err);
+    console.error('❌ Error crítico en server:', err && err.message ? err.message : err);
   });
 }
 
