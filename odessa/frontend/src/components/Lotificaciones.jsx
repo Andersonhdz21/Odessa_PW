@@ -27,6 +27,7 @@ const Lotificaciones = ({ onOpenLogin }) => {
   const [selectedSubdivision, setSelectedSubdivision] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   
+  const [backdropActive, setBackdropActive] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [modalStyles, setModalStyles] = useState(null);
   const [originCoords, setOriginCoords] = useState(null);
@@ -141,6 +142,10 @@ const Lotificaciones = ({ onOpenLogin }) => {
     setOriginCoords(initialStyles);
     setModalStyles(initialStyles);
     setSelectedSubdivision(item);
+
+    setTimeout(() => {
+        setBackdropActive(true);
+    }, 50);
     
     const user = localStorage.getItem('usuario');
     if (user) setCurrentUser(JSON.parse(user));
@@ -165,6 +170,7 @@ const Lotificaciones = ({ onOpenLogin }) => {
         setSelectedSubdivision(null);
         return;
     }
+    setBackdropActive(false); 
     setIsClosing(true);
     setModalStyles({ ...originCoords, borderRadius: '20px' });
 
@@ -241,7 +247,7 @@ const Lotificaciones = ({ onOpenLogin }) => {
       {selectedSubdivision && (
         <>
           <div 
-            className={`lot-backdrop ${!isClosing ? 'active' : ''}`} 
+            className={`lot-backdrop ${backdropActive ? 'active' : ''}`} 
             onClick={closeModal}
           ></div>
 
