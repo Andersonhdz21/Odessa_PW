@@ -5,16 +5,8 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './Lotificaciones.css';
 
-const lotificacionesData = [
-  { id: 1, name: 'Las Canarias', img: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' },
-  { id: 2, name: 'Altos de San Andrés', img: 'https://images.unsplash.com/photo-1591389703635-e15a07b842d7?q=80&w=1033&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-  { id: 3, name: 'Brisas del Campo', img: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' },
-  { id: 4, name: 'Valle Verde', img: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80' },
-];
-
-const departamentos = ["La Libertad", "San Salvador", "San Miguel", "Santa Ana"];
-
-const NextArrow = ({ onClick }) => (
+//arrows
+const NextArrow = ({ onClick, className, style }) => (
   <div className="custom-arrow next-arrow" onClick={onClick}>
     <ChevronRight size={24} color="white" strokeWidth={3} />
   </div>
@@ -27,20 +19,17 @@ const PrevArrow = ({ onClick }) => (
 );
 
 const Lotificaciones = () => {
+  //state
   const [activeSlide, setActiveSlide] = useState(0);
   const [deptOpen, setDeptOpen] = useState(false);
-  const [selectedDept, setSelectedDept] = useState("La Libertad");
-  
-  // Inicializamos el estado basándonos directamente en el ancho actual
+  const [selectedDept, setSelectedDept] = useState(""); 
+  const [allSubdivisions, setAllSubdivisions] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const dropdownRef = useRef(null);
 
+  //ui listeners
   useEffect(() => {
-    const handleResize = () => {
-      const mobileCheck = window.innerWidth < 768;
-      setIsMobile(mobileCheck);
-    };
-
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     
     const handleClickOutside = (event) => {
@@ -49,8 +38,6 @@ const Lotificaciones = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    
-    // Llamada inicial para asegurar estado correcto al montar
     handleResize();
 
     return () => {
@@ -59,22 +46,71 @@ const Lotificaciones = () => {
     };
   }, []);
 
+  //fetch data
+  useEffect(() => {
+    const fetchSubdivisions = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/subdivisions');
+        
+        if (response.ok) {
+          const data = await response.json();
+          setAllSubdivisions(data);
+
+          if (data.length > 0) {
+            const hasLaLibertad = data.some(item => item.department === 'La Libertad');
+            setSelectedDept(hasLaLibertad ? 'La Libertad' : data[0].department);
+          }
+        } else {
+          console.error("Error al obtener lotificaciones del servidor");
+        }
+      } catch (error) {
+        console.error("Error de conexión con el backend:", error);
+      }
+    };
+
+    fetchSubdivisions();
+  }, []);
+
+  //data logic
+  const departamentos = useMemo(() => {
+    if (!allSubdivisions.length) return [];
+    const depts = allSubdivisions.map(item => item.department).filter(Boolean);
+    return [...new Set(depts)].sort(); 
+  }, [allSubdivisions]);
+
+  const filteredData = useMemo(() => {
+    if (!selectedDept) return [];
+    return allSubdivisions.filter(item => item.department === selectedDept);
+  }, [allSubdivisions, selectedDept]);
+
+  const processedData = useMemo(() => {
+    if (filteredData.length === 0) return [];
+    if (isMobile) return filteredData;
+
+    const count = filteredData.length;
+    if (count > 1 && count < 5) {
+        return [...filteredData, ...filteredData, ...filteredData];
+    }
+    
+    return filteredData;
+  }, [isMobile, filteredData]);
+
+  //slider config
   const settings = useMemo(() => ({
     className: "center",
     centerMode: true,
     infinite: true,
     centerPadding: "0px",
-    // Aquí forzamos manualmente la cantidad de slides según el estado
     slidesToShow: isMobile ? 1 : 3,
     speed: 500,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
-    beforeChange: (_, next) => setActiveSlide(next),
-    // Eliminamos el objeto 'responsive' interno de slick para evitar conflictos
-  }), [isMobile]);
+    beforeChange: (_, next) => setActiveSlide(next % (filteredData.length || 1)),
+  }), [isMobile, filteredData.length]);
 
   const handleSelectDept = (dept) => {
     setSelectedDept(dept);
+    setActiveSlide(0); 
     setDeptOpen(false);
   };
 
@@ -90,7 +126,7 @@ const Lotificaciones = () => {
             className={`department-selector ${deptOpen ? 'open' : ''}`} 
             onClick={() => setDeptOpen(!deptOpen)}
           >
-            <span>{selectedDept}</span>
+            <span>{selectedDept || "Cargando..."}</span>
             <ChevronDown 
               className={`dropdown-icon ${deptOpen ? 'rotate' : ''}`} 
               size={20} 
@@ -112,19 +148,33 @@ const Lotificaciones = () => {
       </div>
 
       <div className="carousel-wrapper">
-        {/* La key fuerza a React a destruir y recrear el componente al cambiar de modo */}
-        <Slider {...settings} key={isMobile ? 'mobile' : 'desktop'}>
-          {lotificacionesData.map((item, index) => (
-            <div key={item.id} className="slide-item-container">
-              <div className={`slide-card ${index === activeSlide ? 'active' : ''}`}>
-                <img src={item.img} alt={item.name} />
-                <div className="card-overlay">
-                  <span className="location-pill">{item.name}</span>
+        {processedData.length > 0 ? (
+            <Slider {...settings} key={`${selectedDept}-${isMobile ? 'mobile' : 'desktop'}`}>
+            {processedData.map((item, index) => {
+                return (
+                <div key={index} className="slide-item-container">
+                    <div className={`slide-card`}>
+                    <img 
+                        src={item.images} 
+                        alt={item.name} 
+                        onError={(e) => { 
+                            e.target.onerror = null; 
+                            e.target.src = '../../assets/imageOnError.png'; 
+                        }} 
+                    />
+                    <div className="card-overlay">
+                        <span className="location-pill">{item.name}</span>
+                    </div>
+                    </div>
                 </div>
-              </div>
+                );
+            })}
+            </Slider>
+        ) : (
+            <div style={{ textAlign: 'center', color: 'white', marginTop: '50px', fontSize: '1.2rem' }}>
+                <p>No hay lotificaciones disponibles en este departamento.</p>
             </div>
-          ))}
-        </Slider>
+        )}
       </div>
     </section>
   );
