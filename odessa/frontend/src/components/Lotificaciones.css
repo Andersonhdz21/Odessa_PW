@@ -70,7 +70,6 @@
 
 .dropdown-icon {
     transition: transform 0.3s ease;
-    right: 0;
     margin-left: auto;
 }
 
@@ -106,7 +105,6 @@
     opacity: 0;
     visibility: hidden;
     transform: translateY(-20px) scale(0.95);
-    transition-delay: 0s;
 }
 
 .dropdown-item {
@@ -127,7 +125,6 @@
 
 .carousel-wrapper {
     width: 100%;
-    padding: 0;
     margin-top: 10px;
 }
 
@@ -142,21 +139,26 @@
     justify-content: center !important;
     align-items: center !important;
     width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    outline: none;
 }
 
 .slide-card {
-    border-radius: 20px;
+    border-radius: 30px;
     overflow: hidden;
     position: relative;
     width: 100%;
     height: 250px;
     opacity: 0.5;
     transform: scale(0.9);
-    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0s;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     cursor: pointer;
+}
+
+.slide-card.hidden-card {
+    opacity: 0 !important;
+    visibility: visible;
+    transition: opacity 0.1s;
 }
 
 .slide-card img {
@@ -218,7 +220,6 @@
     z-index: 30;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
     transition: transform 0.1s ease, background-color 0.3s;
-    outline: none;
 }
 
 .custom-arrow:hover {
@@ -246,11 +247,9 @@
     width: 100%;
     height: 100%;
     background-color: transparent;
-    backdrop-filter: blur(0);
-    -webkit-backdrop-filter: blur(0);
     z-index: 2000;
     pointer-events: none;
-    transition: background-color 0.4s ease, backdrop-filter 0.4s ease, -webkit-backdrop-filter 0.4s ease;
+    transition: background-color 0.4s ease, backdrop-filter 0.4s ease;
 }
 
 .lot-backdrop.active {
@@ -266,31 +265,17 @@
     z-index: 2001;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     overflow: hidden;
-    transition: top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-        left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-        width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-        height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-        border-radius 0.4s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.modal-inner-content {
+.hero-image-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    overflow-y: auto;
-    transition: opacity 0.3s ease 0.1s;
-}
-
-.modal-inner-content.showing {
-    opacity: 1;
-}
-
-.modal-inner-content.hiding {
-    opacity: 0;
-    transition: opacity 0.1s ease;
+    object-fit: cover;
+    z-index: 0;
 }
 
 .close-modal-btn {
@@ -308,23 +293,41 @@
     cursor: pointer;
     z-index: 50;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    opacity: 0;
     transition: opacity 0.3s ease, transform 0.2s ease, background-color 0.2s ease;
 }
 
 .close-modal-btn.showing {
     opacity: 1;
-    transition-delay: 0s;
 }
 
 .close-modal-btn.hiding {
     opacity: 0;
-    transition-delay: 0s;
 }
 
 .close-modal-btn:hover {
     background-color: #ff0000;
     transform: scale(1.1);
+}
+
+.modal-inner-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    transition: opacity 0.4s ease 0.1s;
+    z-index: 1;
+    background-color: #e0e0e0;
+}
+
+.modal-inner-content.visible {
+    opacity: 1;
+}
+
+.modal-inner-content.hidden {
+    opacity: 0;
 }
 
 .modal-header h2 {
@@ -344,11 +347,8 @@
     height: 100%;
 }
 
-
 .map-container {
     flex: 1;
-    width: 100%;
-    height: 50%;
     background: #ccc;
     border-radius: 20px;
     overflow: hidden;
@@ -416,70 +416,16 @@
     font-style: italic;
 }
 
-.slide-card.hidden-card {
-    opacity: 0 !important;
-    visibility: hidden;
-    transition: opacity 0.1s ease;
-}
-
-.modal-animated-window {
-    background-color: transparent;
-    position: fixed;
-    z-index: 2001;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); 
-}
-
-.hero-image-modal {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
-    transition: none;
-}
-
-.modal-inner-content {
-    position: relative;
-    z-index: 1; 
-    width: 100%;
-    height: 100%;
-    background-color: #e0e0e0; 
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.modal-inner-content.visible {
-    opacity: 1;
-}
-.modal-inner-content.hidden {
-    opacity: 0;
-}
-
-.close-modal-btn {
-    z-index: 50;
-}
-
 @media (max-width: 768px) {
-    .modal-inner-content {
-        padding: 0;
-        overflow-y: auto;
-    }
-
     .modal-body {
         flex-direction: column;
         gap: 20px;
-        height: auto;
         padding: 0 40px;
     }
 
     .map-container,
     .iframe-wrapper,
     .iframe-wrapper iframe {
-        width: 100%;
         height: 50%;
         min-height: 350px;
     }
@@ -490,7 +436,6 @@
 
     .modal-actions {
         margin-top: 5%;
-        text-align: center;
     }
 
     .btn-cotizar {
@@ -503,7 +448,6 @@
         flex-direction: column;
         height: auto;
         margin-bottom: 0;
-        padding-top: 0;
     }
 
     .title-ribbon {
