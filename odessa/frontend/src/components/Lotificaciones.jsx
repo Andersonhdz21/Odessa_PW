@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Slider from 'react-slick';
-import { ChevronLeft, ChevronRight, ChevronDown, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './Lotificaciones.css';
+
+import LotificacionModal from './LotificacionModal';
 
 const CustomArrow = ({ onClick, direction }) => (
   <div className={`custom-arrow ${direction === 'next' ? 'next-arrow' : 'prev-arrow'}`} onClick={onClick}>
@@ -27,7 +29,7 @@ const Lotificaciones = ({ onOpenLogin }) => {
   const dropdownRef = useRef(null);
   const sliderRef = useRef(null);
 
-useEffect(() => {
+  useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setDeptOpen(false);
@@ -226,44 +228,15 @@ useEffect(() => {
       </div>
 
       {selectedSubdivision && (
-        <>
-          <div className={`lot-backdrop ${backdropActive ? 'active' : ''}`} onClick={closeModal}></div>
-          <div className="modal-animated-window"
-            style={{
-                top: modalStyles?.top, left: modalStyles?.left,
-                width: modalStyles?.width, height: modalStyles?.height,
-                borderRadius: modalStyles?.borderRadius,
-            }}
-          >
-            <img 
-                src={selectedSubdivision.images} 
-                alt="" 
-                className="hero-image-modal"
-                onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Sin+Imagen'; }}
-            />
-            <button className={`close-modal-btn ${showContent ? 'showing' : 'hiding'}`} onClick={closeModal}>
-              <X size={30} strokeWidth={5} color="blue"/>
-            </button>
-            <div className={`modal-inner-content ${showContent ? 'visible' : 'hidden'}`}>
-              <div className="modal-header"><h2>{selectedSubdivision.name}</h2></div>
-              <div className="modal-body">
-                <div className="map-container">
-                  <div className="iframe-wrapper" dangerouslySetInnerHTML={{ __html: selectedSubdivision.location }} />
-                </div>
-                <div className="info-container">
-                  <p className="info-text"><span className="info-label">Descripción: </span>{selectedSubdivision.description}</p>
-                  <p className="info-text"><span className="info-label">Ubicación: </span>{selectedSubdivision.department}, El Salvador</p>
-                  <div className="modal-actions">
-                    <button className="btn-cotizar" onClick={handleCotizar}>
-                        {currentUser ? 'Cotizar' : 'Iniciar Sesión'}
-                    </button>
-                    {!currentUser && <p className="login-warning">Inicie sesión para realizar cotización</p>}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
+        <LotificacionModal 
+            subdivision={selectedSubdivision}
+            styles={modalStyles}
+            backdropActive={backdropActive}
+            showContent={showContent}
+            onClose={closeModal}
+            onCotizar={handleCotizar}
+            currentUser={currentUser}
+        />
       )}
     </section>
   );
