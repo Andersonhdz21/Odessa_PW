@@ -51,9 +51,10 @@ const Login = ({ onClose, onSwitchToRegister, onLogin }) => {
   };
 
   useEffect(() => {
-    const prev = document.body.style.overflow || '';
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
+    return () => { 
+        document.body.style.overflow = ''; 
+    };
   }, []);
 
   return (

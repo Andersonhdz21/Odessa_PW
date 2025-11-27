@@ -171,7 +171,7 @@ const Lotificaciones = ({ onOpenLogin }) => {
             const event = new Event('open-login-modal');
             window.dispatchEvent(event);
         }
-      }, 450);
+      }, 600);
     } else {
         console.log("Usuario autenticado, iniciando proceso de cotización...", currentUser);
     }
