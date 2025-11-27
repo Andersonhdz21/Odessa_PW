@@ -27,15 +27,25 @@ const Lotificaciones = ({ onOpenLogin }) => {
   const dropdownRef = useRef(null);
   const sliderRef = useRef(null);
 
-  useEffect(() => {
+useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setDeptOpen(false);
     };
     
-    const user = localStorage.getItem('usuario');
-    if (user) setCurrentUser(JSON.parse(user));
+    const checkUser = () => {
+        const user = localStorage.getItem('usuario');
+        if (user) {
+            setCurrentUser(JSON.parse(user));
+        } else {
+            setCurrentUser(null);
+        }
+    };
 
+    checkUser();
+
+    window.addEventListener('auth-change', checkUser);
+    window.addEventListener('storage', checkUser); 
     window.addEventListener('resize', handleResize);
     document.addEventListener("mousedown", handleClickOutside);
     
@@ -59,6 +69,8 @@ const Lotificaciones = ({ onOpenLogin }) => {
     return () => {
       window.removeEventListener('resize', handleResize);
       document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener('auth-change', checkUser);
+      window.removeEventListener('storage', checkUser);
     };
   }, []);
 
@@ -146,9 +158,20 @@ const Lotificaciones = ({ onOpenLogin }) => {
   };
 
   const handleCotizar = () => {
-    if (!currentUser && onOpenLogin) {
+    if (!currentUser) {
       closeModal();
-      setTimeout(onOpenLogin, 450);
+      
+      setTimeout(() => {
+        if (onOpenLogin) {
+            onOpenLogin();
+        } 
+        else {
+            const event = new Event('open-login-modal');
+            window.dispatchEvent(event);
+        }
+      }, 450);
+    } else {
+        console.log("Usuario autenticado, iniciando proceso de cotización...", currentUser);
     }
   };
 
@@ -231,8 +254,10 @@ const Lotificaciones = ({ onOpenLogin }) => {
                   <p className="info-text"><span className="info-label">Descripción: </span>{selectedSubdivision.description}</p>
                   <p className="info-text"><span className="info-label">Ubicación: </span>{selectedSubdivision.department}, El Salvador</p>
                   <div className="modal-actions">
-                    <button className="btn-cotizar" onClick={handleCotizar}>Cotizar</button>
-                    {!currentUser && <p className="login-warning">Para realizar cotización debe iniciar sesión</p>}
+                    <button className="btn-cotizar" onClick={handleCotizar}>
+                        {currentUser ? 'Cotizar' : 'Iniciar Sesión'}
+                    </button>
+                    {!currentUser && <p className="login-warning">Inicie sesión para realizar cotización</p>}
                   </div>
                 </div>
               </div>

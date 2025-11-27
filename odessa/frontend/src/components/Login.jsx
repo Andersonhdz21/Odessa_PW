@@ -61,7 +61,7 @@ const Login = ({ onClose, onSwitchToRegister, onLogin }) => {
       if (e.target === e.currentTarget) onClose();
     }}>
       <div className="login-box enter">
-        <button className="close-x" onClick={onClose}>×</button>
+        <button className="close-x" onClick={onClose}>X</button>
 
         <h2>Iniciar Sesión</h2>
 
