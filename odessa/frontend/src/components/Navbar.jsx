@@ -139,17 +139,13 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleOpenLoginEvent = () => {
-      // Si el menú de hamburguesa está abierto, lo cerramos
       setMenuAbierto(false);
-      // Abrimos el login
       setMostrarLogin(true);
-      // Nos aseguramos que el registro esté cerrado
       setMostrarRegister(false);
     };
 
     window.addEventListener('open-login-modal', handleOpenLoginEvent);
     
-    // Limpieza al desmontar
     return () => {
       window.removeEventListener('open-login-modal', handleOpenLoginEvent);
     };
