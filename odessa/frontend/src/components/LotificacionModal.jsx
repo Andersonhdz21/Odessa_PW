@@ -1,5 +1,4 @@
 import React from 'react';
-import { X } from 'lucide-react';
 import './LotificacionModal.css';
 
 const LotificacionModal = ({ 
@@ -37,8 +36,11 @@ const LotificacionModal = ({
             onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Sin+Imagen'; }}
         />
         
-        <button className={`close-modal-btn ${showContent ? 'showing' : 'hiding'}`} onClick={onClose}>
-          <X size={30} strokeWidth={5} color="blue"/>
+        <button 
+            className={`close-x ${showContent ? 'showing' : 'hiding'}`} 
+            onClick={onClose}
+        >
+            x
         </button>
         
         <div className={`modal-inner-content ${showContent ? 'visible' : 'hidden'}`}>
