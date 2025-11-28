@@ -15,12 +15,24 @@ const LotificacionModal = ({
 
   useEffect(() => {
     if (!showContent) {
-      const timer = setTimeout(() => setShowQuoteView(false), 400);
+      const timer = setTimeout(() => setShowQuoteView(false), 500);
       return () => clearTimeout(timer);
     }
   }, [showContent]);
 
   if (!subdivision) return null;
+
+  const handleSmartClose = () => {
+    if (showQuoteView) {
+      setShowQuoteView(false);
+
+      setTimeout(() => {
+        onClose();
+      }, 500);
+    } else {
+      onClose();
+    }
+  };
 
   const handleCotizarClick = () => {
     if (!currentUser) {
@@ -38,11 +50,11 @@ const LotificacionModal = ({
     <>
       <div 
         className={`lot-backdrop ${backdropActive ? 'active' : ''}`} 
-        onClick={onClose}
+        onClick={handleSmartClose}
       ></div>
       
       <div 
-        className="modal-animated-window"
+        className={`modal-animated-window ${showContent ? 'active-fade' : ''}`}
         style={{
             top: styles?.top, 
             left: styles?.left,
@@ -53,7 +65,7 @@ const LotificacionModal = ({
       >
         <button 
             className={`close-x ${showContent ? 'showing' : 'hiding'}`} 
-            onClick={onClose}
+            onClick={handleSmartClose}
         >
             x
         </button>
@@ -109,10 +121,13 @@ const LotificacionModal = ({
             </div>
 
             <div className="view-section" style={{ backgroundColor: '#e0e0e0' }}>
-                <CotizadorView 
-                    subdivision={subdivision}
-                    onAsesorar={() => console.log("Contactando asesor...")}
-                />
+                <div className={`modal-inner-content ${showContent ? 'visible' : 'hidden'}`} style={{ padding: 0 }}>
+                    <CotizadorView 
+                        subdivision={subdivision}
+                        currentUser={currentUser} 
+                        onAsesorar={() => console.log("Click en asesorar")} 
+                    />
+                </div>
             </div>
         </div>
       </div>

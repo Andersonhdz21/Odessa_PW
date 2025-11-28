@@ -5,7 +5,6 @@ import WhatsappIcon from '../assets/whatsapp-icon.svg';
 const Footer = () => {
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text);
-        alert(`Número copiado: ${text}`);
     };
 
     return (
