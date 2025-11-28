@@ -1,10 +1,17 @@
 .view-section {
     -ms-overflow-style: none;
     scrollbar-width: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #cccccc #e0e0e0;
+    
 }
 
 .view-section::-webkit-scrollbar {
-    display: none;
+    width: 6px; 
+    background-color: #e0e0e0; 
+    display: block;
 }
 
 .cotizador-container {
