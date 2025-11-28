@@ -124,14 +124,32 @@ const Navbar = () => {
       if (u) setUsuarioActual(JSON.parse(u));
     }
     setMostrarLogin(false);
+    window.dispatchEvent(new Event('auth-change'));
   };
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
+    
     setUsuarioActual(null);
     closeUserMenu();
+
+    window.dispatchEvent(new Event('auth-change'));
   };
+
+  useEffect(() => {
+    const handleOpenLoginEvent = () => {
+      setMenuAbierto(false);
+      setMostrarLogin(true);
+      setMostrarRegister(false);
+    };
+
+    window.addEventListener('open-login-modal', handleOpenLoginEvent);
+    
+    return () => {
+      window.removeEventListener('open-login-modal', handleOpenLoginEvent);
+    };
+  }, []);
 
   return (
     <>

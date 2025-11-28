@@ -51,9 +51,10 @@ const Login = ({ onClose, onSwitchToRegister, onLogin }) => {
   };
 
   useEffect(() => {
-    const prev = document.body.style.overflow || '';
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
+    return () => { 
+        document.body.style.overflow = ''; 
+    };
   }, []);
 
   return (
@@ -61,7 +62,7 @@ const Login = ({ onClose, onSwitchToRegister, onLogin }) => {
       if (e.target === e.currentTarget) onClose();
     }}>
       <div className="login-box enter">
-        <button className="close-x" onClick={onClose}>×</button>
+        <button className="close-x" onClick={onClose}>x</button>
 
         <h2>Iniciar Sesión</h2>
 

@@ -17,7 +17,6 @@
   transition: transform 800ms cubic-bezier(.2, .9, .2, 1);
 }
 
-/* Logo */
 .logo {
   display: flex;
   align-items: center;
@@ -36,7 +35,6 @@
   font-weight: 600;
 }
 
-/* Enlaces */
 .nav-links {
   list-style: none;
   display: flex;
@@ -62,7 +60,6 @@
   color: #6dbf49;
 }
 
-/* User Section */
 .user-section {
   display: flex;
   align-items: center;
@@ -141,7 +138,6 @@
   color: white;
 }
 
-/* User Icon */
 .user-icon {
   width: 35px;
   height: 35px;
@@ -164,7 +160,6 @@
   transform: scale(1.1);
 }
 
-/* Menú hamburguesa */
 .menu-hamburguesa {
   display: none;
   flex-direction: column;
@@ -204,7 +199,6 @@
   transform: translateX(-50%) translateY(8px);
 }
 
-/* Backdrop */
 .backdrop {
   position: fixed;
   top: 0;
@@ -268,7 +262,6 @@
   }
 }
 
-/* Animación de salida user-menu*/
 .user-menu.out {
   animation: userMenuOut 300ms ease-out forwards;
 }
@@ -285,7 +278,6 @@
   }
 }
 
-/* Responsive */
 @media screen and (max-width: 768px) {
   .navbar {
     padding: 0 20px;
@@ -385,7 +377,6 @@
   }
 }
 
-/* Hidden state: al deslizar se esconde navbar */
 .navbar.hidden {
   transform: translateY(-130%);
   pointer-events: none;

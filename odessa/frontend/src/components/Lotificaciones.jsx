@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Slider from 'react-slick';
-import { ChevronLeft, ChevronRight, ChevronDown, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './Lotificaciones.css';
+
+import LotificacionModal from './LotificacionModal';
 
 const CustomArrow = ({ onClick, direction }) => (
   <div className={`custom-arrow ${direction === 'next' ? 'next-arrow' : 'prev-arrow'}`} onClick={onClick}>
@@ -33,9 +35,19 @@ const Lotificaciones = ({ onOpenLogin }) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setDeptOpen(false);
     };
     
-    const user = localStorage.getItem('usuario');
-    if (user) setCurrentUser(JSON.parse(user));
+    const checkUser = () => {
+        const user = localStorage.getItem('usuario');
+        if (user) {
+            setCurrentUser(JSON.parse(user));
+        } else {
+            setCurrentUser(null);
+        }
+    };
 
+    checkUser();
+
+    window.addEventListener('auth-change', checkUser);
+    window.addEventListener('storage', checkUser); 
     window.addEventListener('resize', handleResize);
     document.addEventListener("mousedown", handleClickOutside);
     
@@ -59,6 +71,8 @@ const Lotificaciones = ({ onOpenLogin }) => {
     return () => {
       window.removeEventListener('resize', handleResize);
       document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener('auth-change', checkUser);
+      window.removeEventListener('storage', checkUser);
     };
   }, []);
 
@@ -146,9 +160,20 @@ const Lotificaciones = ({ onOpenLogin }) => {
   };
 
   const handleCotizar = () => {
-    if (!currentUser && onOpenLogin) {
+    if (!currentUser) {
       closeModal();
-      setTimeout(onOpenLogin, 450);
+      
+      setTimeout(() => {
+        if (onOpenLogin) {
+            onOpenLogin();
+        } 
+        else {
+            const event = new Event('open-login-modal');
+            window.dispatchEvent(event);
+        }
+      }, 600);
+    } else {
+        console.log("Usuario autenticado, iniciando proceso de cotización...", currentUser);
     }
   };
 
@@ -203,42 +228,15 @@ const Lotificaciones = ({ onOpenLogin }) => {
       </div>
 
       {selectedSubdivision && (
-        <>
-          <div className={`lot-backdrop ${backdropActive ? 'active' : ''}`} onClick={closeModal}></div>
-          <div className="modal-animated-window"
-            style={{
-                top: modalStyles?.top, left: modalStyles?.left,
-                width: modalStyles?.width, height: modalStyles?.height,
-                borderRadius: modalStyles?.borderRadius,
-            }}
-          >
-            <img 
-                src={selectedSubdivision.images} 
-                alt="" 
-                className="hero-image-modal"
-                onError={(e) => { e.currentTarget.src = 'https://via.placeholder.com/400x300?text=Sin+Imagen'; }}
-            />
-            <button className={`close-modal-btn ${showContent ? 'showing' : 'hiding'}`} onClick={closeModal}>
-              <X size={30} strokeWidth={5} color="blue"/>
-            </button>
-            <div className={`modal-inner-content ${showContent ? 'visible' : 'hidden'}`}>
-              <div className="modal-header"><h2>{selectedSubdivision.name}</h2></div>
-              <div className="modal-body">
-                <div className="map-container">
-                  <div className="iframe-wrapper" dangerouslySetInnerHTML={{ __html: selectedSubdivision.location }} />
-                </div>
-                <div className="info-container">
-                  <p className="info-text"><span className="info-label">Descripción: </span>{selectedSubdivision.description}</p>
-                  <p className="info-text"><span className="info-label">Ubicación: </span>{selectedSubdivision.department}, El Salvador</p>
-                  <div className="modal-actions">
-                    <button className="btn-cotizar" onClick={handleCotizar}>Cotizar</button>
-                    {!currentUser && <p className="login-warning">Para realizar cotización debe iniciar sesión</p>}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
+        <LotificacionModal 
+            subdivision={selectedSubdivision}
+            styles={modalStyles}
+            backdropActive={backdropActive}
+            showContent={showContent}
+            onClose={closeModal}
+            onCotizar={handleCotizar}
+            currentUser={currentUser}
+        />
       )}
     </section>
   );
