@@ -174,7 +174,7 @@
     left: 0;
     width: 100%;
     min-width: 150px;
-    background-color: rgba(30, 40, 30, 0.5);
+    background-color: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 15px;
@@ -273,9 +273,6 @@
     margin: 0;
 }
 
-.styled-input[type=number] {
-    -moz-appearance: textfield;
-}
 
 .total-bar-container {
     background-color: #6dbf49;

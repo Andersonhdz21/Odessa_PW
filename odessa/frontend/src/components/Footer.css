@@ -99,7 +99,7 @@
 .schedule-box {
     margin-top: 15px;
     text-align: center;
-    color: rgba(196, 196, 196, 0.849);
+    color: #acd6ab;
 }
 
 .schedule-label {
@@ -113,6 +113,7 @@
 
 .schedule-time {
     font-size: 0.95rem;
+    font-weight: 400;
     margin: 2px 0;
     line-height: 1.4;
 }
