@@ -246,6 +246,31 @@
     transform: translateX(-50%);
 }
 
+
+.modal-animated-window::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 45px;
+    background: linear-gradient(to bottom, #e0e0e0 20%, transparent);
+    z-index: 50;
+    pointer-events: none;
+}
+
+.modal-animated-window::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45px;
+    background: linear-gradient(to top, #e0e0e0 20%, transparent);
+    z-index: 50;
+    pointer-events: none;
+}
+
 @media (max-width: 768px) {
     .modal-body {
         flex-direction: column;
