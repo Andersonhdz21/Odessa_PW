@@ -17,7 +17,6 @@ const Footer = () => {
                     <nav className="footer-nav">
                         <a href="#services-section" className="nav-item">Inicio</a>
                         <a href="#Lotificaciones-section" className="nav-item">Lotificaciones</a>
-                        <a href="#" className="nav-item">Cotización</a>
                     </nav>
                 </div>
 
