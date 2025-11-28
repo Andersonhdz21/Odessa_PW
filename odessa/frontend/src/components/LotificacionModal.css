@@ -169,7 +169,7 @@
 }
 
 .back-btn-floating:hover {
-    background-color: #e0e0e0 !important;
+    background-color: #27528375 !important;
     transform: scale(1.1);
 }
 
@@ -207,12 +207,12 @@
     justify-content: center;
     border: none;
     cursor: pointer;
-    z-index: 10;
+    z-index: 60;
     transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
 }
 
 .close-x:hover {
-    background-color: #e0e0e0 !important;
+    background-color: #c4434365 !important;
     transform: scale(1.1);
 }
 
@@ -246,29 +246,32 @@
     transform: translateX(-50%);
 }
 
-
-.modal-animated-window::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 45px;
-    background: linear-gradient(to bottom, #e0e0e0 20%, transparent);
-    z-index: 50;
-    pointer-events: none;
-}
-
+.modal-animated-window::before,
 .modal-animated-window::after {
     content: '';
     position: absolute;
-    bottom: 0;
     left: 0;
     width: 100%;
-    height: 45px;
-    background: linear-gradient(to top, #e0e0e0 20%, transparent);
+    height: 40px;
     z-index: 50;
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease; 
+}
+
+.modal-animated-window::before {
+    top: 0;
+    background: linear-gradient(to bottom, #e0e0e0 20%, transparent);
+}
+
+.modal-animated-window::after {
+    bottom: 0;
+    background: linear-gradient(to top, #e0e0e0 20%, transparent);
+}
+
+.modal-animated-window.active-fade::before,
+.modal-animated-window.active-fade::after {
+    opacity: 1;
 }
 
 @media (max-width: 768px) {
