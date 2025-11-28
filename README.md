@@ -12,3 +12,7 @@ en la ruta: odessa/frontend
 >para crear ramas
 
 ´git switch -c Feature/Nombre´
+
+>para descargar node
+
+´npm install´
