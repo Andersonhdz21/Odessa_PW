@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { ChevronDown } from 'lucide-react';
 import './CotizadorView.css';
 
-const CotizadorView = ({ subdivision, onAsesorar }) => {
+const CotizadorView = ({ subdivision, currentUser, onAsesorar }) => {
   const [lots, setLots] = useState([]);
   const [selectedLotId, setSelectedLotId] = useState('');
   const [loading, setLoading] = useState(true);
@@ -84,6 +84,22 @@ const CotizadorView = ({ subdivision, onAsesorar }) => {
 
   if (loading) return <div className="loading-state">Cargando...</div>;
 
+  const handleWhatsAppClick = () => {
+    const telefono = "50360622144"; 
+
+    const nombreLote = currentLot ? currentLot.name : "un lote";
+    const nombreLotificacion = subdivision.name;
+    const nombreUsuario = currentUser ? currentUser.username : "un cliente interesado"; 
+
+    const mensaje = `Hola, estoy interesado en el ${nombreLote} del proyecto ${nombreLotificacion}, Me gustaría recibir asesoría personalizada. Mi nombre es ${nombreUsuario}.`;
+
+    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+    
+    window.open(url, '_blank');
+
+    if (onAsesorar) onAsesorar();
+  };
+
   return (
     <div className="cotizador-container">
       <h2 className="cotizador-title">Cotización</h2>
@@ -104,7 +120,7 @@ const CotizadorView = ({ subdivision, onAsesorar }) => {
             />
           </div>
 
-          <button className="btn-asesorar-view" onClick={onAsesorar}>
+          <button className="btn-asesorar-view" onClick={handleWhatsAppClick}>
             Asesorar
           </button>
         </div>

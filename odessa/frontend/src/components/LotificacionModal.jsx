@@ -124,7 +124,8 @@ const LotificacionModal = ({
                 <div className={`modal-inner-content ${showContent ? 'visible' : 'hidden'}`} style={{ padding: 0 }}>
                     <CotizadorView 
                         subdivision={subdivision}
-                        onAsesorar={() => console.log("Contactando asesor...")}
+                        currentUser={currentUser} 
+                        onAsesorar={() => console.log("Click en asesorar")} 
                     />
                 </div>
             </div>
