@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Footer.css';
 import WhatsappIcon from '../assets/whatsapp-icon.svg';
 
 const Footer = () => {
+    const [showCopied, setShowCopied] = useState(false);
+
     const handleCopy = (text) => {
         navigator.clipboard.writeText(text);
+        
+        setShowCopied(true);
+
+        setTimeout(() => {
+            setShowCopied(false);
+        }, 2500);
     };
 
     return (
@@ -22,16 +30,23 @@ const Footer = () => {
 
                 <div className="footer-right">
                     <p className="contact-title">Contáctanos:</p>
-                    <div
-                        className="phone-box"
-                        onClick={() => handleCopy('+503 2243 9272')}
-                        title="Clic para copiar el número"
-                    >
-                        <span>+503 2243 9272</span>
-                        <svg className="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
+                    
+                    <div className="phone-container">
+                        <div className={`copied-badge ${showCopied ? 'show' : ''}`}>
+                            Copiado
+                        </div>
+
+                        <div
+                            className="phone-box"
+                            onClick={() => handleCopy('+503 2243 9272')}
+                            title="Clic para copiar el número"
+                        >
+                            <span>+503 2243 9272</span>
+                            <svg className="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </div>
                     </div>
 
                     <div className="schedule-box">
